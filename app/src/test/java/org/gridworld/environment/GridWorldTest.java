@@ -29,9 +29,9 @@ class GridWorldTest {
     @BeforeEach
     void setUp() {
         map = new GridMap(new Cell[][] {
-                {empty, empty, goal},
-                {wall, bonus, trap},
-                {empty, empty, empty}
+                { empty, empty, goal },
+                { wall, bonus, trap },
+                { empty, empty, empty }
         });
 
         world = new GridWorld(map, start, -1);
@@ -83,10 +83,35 @@ class GridWorldTest {
         assertPosition(new Position(0, 1), result);
     }
 
+    // ---------------- Invalid Movement Tests ----------------
+
+    @Test
+    void cannotMoveOutsideUpperBoundary() {
+        assertBlockedMovement(Direction.UP);
+    }
+
+    @Test
+    void cannotMoveOutsideLeftBoundary() {
+        assertBlockedMovement(Direction.LEFT);
+    }
+
+    @Test
+    void cannotMoveIntoWall() {
+        assertBlockedMovement(Direction.DOWN);
+    }
+
     // ---------------- Helper Methods ----------------
 
     private void assertPosition(Position expected, StepResult result) {
         assertEquals(expected, result.position());
         assertEquals(expected, world.position());
+    }
+
+    private void assertBlockedMovement(Direction direction) {
+        StepResult result = world.step(direction);
+
+        assertPosition(start, result);
+        assertEquals(-1, result.reward());
+        assertFalse(result.done());
     }
 }
