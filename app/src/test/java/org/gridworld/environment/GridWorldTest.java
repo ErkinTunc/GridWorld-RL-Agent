@@ -357,6 +357,96 @@ class GridWorldTest {
         assertEquals(initialPosition, world.position());
     }
 
+    // ---------------- Preview Tests ----------------
+
+    @Test
+    void previewMatchesStepResult() {
+        StepResult expected = world.preview(start, Direction.RIGHT);
+        StepResult actual = world.step(Direction.RIGHT);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void previewCalculatesBonusReward() {
+        StepResult expected = new StepResult(new Position(1, 1), 2, false);
+
+        StepResult actual = world.preview(new Position(0, 1), Direction.DOWN);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void previewCannotMoveIntoWallOrOutsideGrid() {
+        StepResult expected = new StepResult(start, -1, false);
+
+        assertEquals(expected, world.preview(start, Direction.DOWN));
+        assertEquals(expected, world.preview(start, Direction.UP));
+    }
+
+    @Test
+    void previewDoesNotChangeWorldState() {
+        StepResult expected = new StepResult(new Position(0, 2), 9, true);
+
+        StepResult result = world.preview(new Position(0, 1), Direction.RIGHT);
+
+        assertEquals(expected, result);
+        assertEquals(start, world.position());
+
+        StepResult actual = world.step(Direction.RIGHT);
+
+        assertEquals(new StepResult(new Position(0, 1), -1, false), actual);
+    }
+
+    @Test
+    void previewCannotMoveFromTerminalCell() {
+        Position terminal = new Position(0, 2);
+        StepResult expected = new StepResult(terminal, 0, true);
+
+        StepResult actual = world.preview(terminal, Direction.LEFT);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void previewWorksAfterWorldReachesTerminal() {
+        world.step(Direction.RIGHT);
+        world.step(Direction.RIGHT);
+
+        StepResult result = world.preview(start, Direction.RIGHT);
+
+        assertEquals(new StepResult(new Position(0, 1), -1, false), result);
+        assertEquals(new Position(0, 2), world.position());
+
+        StepResult actual = world.step(Direction.LEFT);
+
+        assertEquals(new StepResult(new Position(0, 2), 0, true), actual);
+    }
+
+    // ---------------- Preview Exception Tests ----------------
+
+    @Test
+    void previewRejectsWallPosition() {
+        assertThrows(IllegalArgumentException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        world.preview(new Position(1, 0), Direction.RIGHT);
+                    }
+                });
+    }
+
+    @Test
+    void previewRejectsOutsidePosition() {
+        assertThrows(IllegalArgumentException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        world.preview(new Position(-1, 0), Direction.RIGHT);
+                    }
+                });
+    }
+
     // ---------------- Helper Methods ----------------
 
     private void assertPosition(Position expected, StepResult result) {
