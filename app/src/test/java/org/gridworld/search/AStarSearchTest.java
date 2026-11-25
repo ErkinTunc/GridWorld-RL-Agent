@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AStarPathfinderTest {
+class AStarSearchTest {
 
     private static final Cell EMPTY = new Cell(CellType.EMPTY, 0);
     private static final Cell WALL = new Cell(CellType.WALL, 0);
@@ -28,7 +28,7 @@ class AStarPathfinderTest {
                 { EMPTY, EMPTY, EMPTY },
                 { EMPTY, EMPTY, TERMINAL }
         });
-        AStarPathfinder pathfinder = new AStarPathfinder(map);
+        AStarSeach pathfinder = new AStarSeach(map);
 
         SearchResult result = pathfinder.search(new Position(0, 0), new Position(2, 2));
 
@@ -50,7 +50,7 @@ class AStarPathfinderTest {
                 { EMPTY, WALL, EMPTY }
         });
 
-        SearchResult result = new AStarPathfinder(map)
+        SearchResult result = new AStarSeach(map)
                 .search(new Position(0, 0), new Position(0, 2));
 
         assertFalse(result.pathFound());
@@ -66,7 +66,7 @@ class AStarPathfinderTest {
                 { EMPTY, EMPTY, EMPTY }
         });
 
-        SearchResult result = new AStarPathfinder(map)
+        SearchResult result = new AStarSeach(map)
                 .search(new Position(0, 0), new Position(0, 2));
 
         assertTrue(result.pathFound());
@@ -78,7 +78,7 @@ class AStarPathfinderTest {
     @DisplayName ("Start already at goal produces empty action sequence")
     void startAlreadyAtGoalProducesEmptyActionSequence() {
         Position startAndEnd = new Position(0, 0);
-        SearchResult result = new AStarPathfinder(new GridMap(new Cell[][] { { EMPTY } }))
+        SearchResult result = new AStarSeach(new GridMap(new Cell[][] { { EMPTY } }))
                 .search(startAndEnd, startAndEnd);
 
         assertTrue(result.pathFound());
@@ -90,7 +90,7 @@ class AStarPathfinderTest {
     @Test
     @DisplayName ("Rejects non-walkable start or end")
     void rejectsNonWalkableStartOrEnd() {
-        AStarPathfinder pathfinder = new AStarPathfinder(new GridMap(new Cell[][] {
+        AStarSeach pathfinder = new AStarSeach(new GridMap(new Cell[][] {
                 { EMPTY, WALL, TERMINAL }
         }));
 
@@ -107,7 +107,7 @@ class AStarPathfinderTest {
                 { EMPTY, EMPTY },
                 { EMPTY, TERMINAL }
         });
-        SearchResult result = new AStarPathfinder(map)
+        SearchResult result = new AStarSeach(map)
                 .search(new Position(0, 0), new Position(1, 1));
 
         Position current = result.path().getFirst();
