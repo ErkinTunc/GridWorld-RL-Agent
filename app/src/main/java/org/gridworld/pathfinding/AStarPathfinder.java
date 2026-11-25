@@ -156,6 +156,12 @@ public final class AStarPathfinder implements SearchAlgotihm {
         return Math.abs(position.row() - end.row()) + Math.abs(position.col() - end.col());
     }
 
+    // ------------- Private Classes -----------
+    /**
+     * Represents a node in the search space for the A* algorithm.
+     * Each node contains a position, the cost from the start position to this node,
+     * and the estimated total cost from the start position to the end position through this node.
+     */
     private record SearchNode(Position position, int costFromStart, int estimatedTotalCost) {
     }
 }
