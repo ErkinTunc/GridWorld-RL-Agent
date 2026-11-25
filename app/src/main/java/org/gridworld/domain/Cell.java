@@ -1,5 +1,10 @@
 package org.gridworld.domain;
 
-public class Cell {
-    
+import java.util.Objects;
+
+public record Cell(CellType type, int reward) {
+
+    public Cell {
+        Objects.requireNonNull(type, "type");
+    }
 }
