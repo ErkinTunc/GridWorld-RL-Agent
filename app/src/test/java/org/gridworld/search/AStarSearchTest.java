@@ -28,7 +28,7 @@ class AStarSearchTest {
                 { EMPTY, EMPTY, EMPTY },
                 { EMPTY, EMPTY, TERMINAL }
         });
-        AStarSeach pathfinder = new AStarSeach(map);
+        AStarSearch pathfinder = new AStarSearch(map);
 
         SearchResult result = pathfinder.search(new Position(0, 0), new Position(2, 2));
 
@@ -50,7 +50,7 @@ class AStarSearchTest {
                 { EMPTY, WALL, EMPTY }
         });
 
-        SearchResult result = new AStarSeach(map)
+        SearchResult result = new AStarSearch(map)
                 .search(new Position(0, 0), new Position(0, 2));
 
         assertFalse(result.pathFound());
@@ -66,7 +66,7 @@ class AStarSearchTest {
                 { EMPTY, EMPTY, EMPTY }
         });
 
-        SearchResult result = new AStarSeach(map)
+        SearchResult result = new AStarSearch(map)
                 .search(new Position(0, 0), new Position(0, 2));
 
         assertTrue(result.pathFound());
@@ -78,7 +78,7 @@ class AStarSearchTest {
     @DisplayName ("Start already at goal produces empty action sequence")
     void startAlreadyAtGoalProducesEmptyActionSequence() {
         Position startAndEnd = new Position(0, 0);
-        SearchResult result = new AStarSeach(new GridMap(new Cell[][] { { EMPTY } }))
+        SearchResult result = new AStarSearch(new GridMap(new Cell[][] { { EMPTY } }))
                 .search(startAndEnd, startAndEnd);
 
         assertTrue(result.pathFound());
@@ -90,7 +90,7 @@ class AStarSearchTest {
     @Test
     @DisplayName ("Rejects non-walkable start or end")
     void rejectsNonWalkableStartOrEnd() {
-        AStarSeach pathfinder = new AStarSeach(new GridMap(new Cell[][] {
+        AStarSearch pathfinder = new AStarSearch(new GridMap(new Cell[][] {
                 { EMPTY, WALL, TERMINAL }
         }));
 
@@ -107,7 +107,7 @@ class AStarSearchTest {
                 { EMPTY, EMPTY },
                 { EMPTY, TERMINAL }
         });
-        SearchResult result = new AStarSeach(map)
+        SearchResult result = new AStarSearch(map)
                 .search(new Position(0, 0), new Position(1, 1));
 
         Position current = result.path().getFirst();
