@@ -24,7 +24,11 @@ public final class GridMap {
 
         return validRow && validCol;
     }
-
+    /**
+     * Checks if the specified position is walkable.
+     * @param pos The position to check.
+     * @return true if the position is walkable, false otherwise.
+     */
     public boolean isWalkable(Position pos) {
         if (!isInside(pos)) {
             return false;
@@ -36,6 +40,17 @@ public final class GridMap {
     }
 
     public Cell cellAt(Position pos) {
+        validateBounds(pos);
+
+        return getCellUnchecked(pos);
+    }
+
+    /**
+     * Gets the cell at the specified position.
+     * @param pos The position of the cell to get.
+     * @return The cell at the specified position.
+     */
+    public Cell getCell(Position pos) {
         validateBounds(pos);
 
         return getCellUnchecked(pos);
