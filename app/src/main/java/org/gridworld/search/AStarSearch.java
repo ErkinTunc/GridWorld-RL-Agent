@@ -19,6 +19,7 @@ public final class AStarSearch implements SearchAlgorithm {
     private final GridMap gridMap;
 
     // ------------- Constructor ------------
+
     public AStarSearch(GridMap gridMap) {
         this.gridMap = Objects.requireNonNull(gridMap, "Grid map cannot be null");
     }
@@ -52,7 +53,7 @@ public final class AStarSearch implements SearchAlgorithm {
         while (!frontier.isEmpty()) {
             SearchNode current = frontier.remove();
 
-            if (current.costFromStart() != costFromStart.get(current.position())) {
+            if (isOutdated(current, costFromStart)) {
                 continue;
             }
 
@@ -67,41 +68,68 @@ public final class AStarSearch implements SearchAlgorithm {
 
             expandedNodes++;
 
-            for (Direction direction : Direction.values()) {
-                Position neighbor = Direction.calculateNextPosition(current.position(), direction);
-
-                if (!canVisit(neighbor, end)) {
-                    continue;
-                }
-
-                int tentativeCost = current.costFromStart() + 1;
-                Integer previousCost = costFromStart.get(neighbor);
-
-                if (previousCost != null && tentativeCost >= previousCost) {
-                    continue;
-                }
-
-                costFromStart.put(neighbor, tentativeCost);
-                predecessors.put(neighbor, new Predecessor(current.position(), direction));
-
-                frontier.add(new SearchNode(
-                        neighbor,
-                        tentativeCost,
-                        tentativeCost + manhattanDistance(neighbor, end)));
-            }
+            expandNeighbors(current, end, costFromStart, predecessors, frontier);
         }
 
         return new SearchResult(false, List.of(), List.of(), 0, 0, expandedNodes);
     }
 
-    // ---------------- Helper Methods ----------------
+    // ---------------- Search Helper Methods ----------------
 
     private static PriorityQueue<SearchNode> createFrontier() {
-        return new PriorityQueue<>(
-                Comparator.comparingInt(SearchNode::estimatedTotalCost)
-                        .thenComparingInt(SearchNode::costFromStart)
-                        .thenComparingInt(node -> node.position().row())
-                        .thenComparingInt(node -> node.position().col()));
+
+        Comparator<SearchNode> comparator = Comparator
+                .comparingInt(SearchNode::estimatedTotalCost)
+                .thenComparingInt(SearchNode::costFromStart)
+                .thenComparingInt(node -> node.position().row())
+                .thenComparingInt(node -> node.position().col());
+
+        return new PriorityQueue<>(comparator);
+    }
+
+    private void expandNeighbors(
+            SearchNode current,
+            Position end,
+            Map<Position, Integer> costFromStart,
+            Map<Position, Predecessor> predecessors,
+            PriorityQueue<SearchNode> frontier) {
+
+        int tentativeCost = current.costFromStart() + 1;
+
+        for (Direction direction : Direction.values()) {
+            Position neighbor = Direction.calculateNextPosition(
+                    current.position(), direction);
+
+            if (!canVisit(neighbor, end)) {
+                continue;
+            }
+
+            Integer previousCost = costFromStart.get(neighbor);
+
+            if (previousCost != null && tentativeCost >= previousCost) {
+                continue;
+            }
+
+            costFromStart.put(neighbor, tentativeCost);
+            predecessors.put(
+                    neighbor,
+                    new Predecessor(current.position(), direction));
+
+            frontier.add(new SearchNode(
+                    neighbor,
+                    tentativeCost,
+                    tentativeCost + manhattanDistance(neighbor, end)));
+        }
+    }
+
+    private static boolean isOutdated(
+            SearchNode node,
+            Map<Position, Integer> costFromStart) {
+
+        int currentCost = node.costFromStart();
+        int bestKnownCost = costFromStart.get(node.position());
+
+        return currentCost != bestKnownCost;
     }
 
     private boolean canVisit(Position neighbor, Position end) {
@@ -165,8 +193,11 @@ public final class AStarSearch implements SearchAlgorithm {
         return totalReward;
     }
 
-    private int manhattanDistance(Position position, Position end) {
-        return Math.abs(position.row() - end.row()) + Math.abs(position.col() - end.col());
+    private static int manhattanDistance(Position position, Position end) {
+        int rowDistance = Math.abs(position.row() - end.row());
+        int colDistance = Math.abs(position.col() - end.col());
+
+        return rowDistance + colDistance;
     }
 
     // ---------------- Validation Methods ----------------
