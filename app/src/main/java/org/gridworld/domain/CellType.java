@@ -1,5 +1,7 @@
 package org.gridworld.domain;
 
-public class CellType {
-    
+public enum CellType {
+    EMPTY, 
+    WALL, 
+    TERMINAL
 }
