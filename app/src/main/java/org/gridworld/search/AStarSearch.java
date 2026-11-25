@@ -1,13 +1,13 @@
-package org.gridworld.pathfinding;
+package org.gridworld.search;
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 
-public class AStarPathfinder implements SearchAlgotihm {
+public class AStarSearch implements SearchAlgorithm {
     
     GridMap gridMap;
     
 
-    AStarPathfinder(GridMap gridMap) {
+    AStarSearch(GridMap gridMap) {
         this.gridMap = gridMap;
     }
 
