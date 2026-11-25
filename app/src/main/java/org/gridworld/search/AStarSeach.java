@@ -35,7 +35,7 @@ public final class AStarSeach implements SearchAlgorithm {
      * @throws NullPointerException if the start or end positions are null
      */
     @Override
-    public SearchResult search(Position start, Position end) {
+    public SearchResult search(Position start, Position end) {  
         Objects.requireNonNull(start, "Start position cannot be null");
         Objects.requireNonNull(end, "End position cannot be null");
 
@@ -46,6 +46,8 @@ public final class AStarSeach implements SearchAlgorithm {
         Map<Position, Integer> costFromStart = new HashMap<>();
         Map<Position, Position> predecessor = new HashMap<>();
         Map<Position, Direction> directionFromPredecessor = new HashMap<>();
+
+
         PriorityQueue<SearchNode> frontier = new PriorityQueue<>(
                 Comparator.comparingInt(SearchNode::estimatedTotalCost)
                         .thenComparingInt(SearchNode::costFromStart)
@@ -108,13 +110,7 @@ public final class AStarSeach implements SearchAlgorithm {
         return new SearchResult(false, List.of(), List.of(), 0, 0, expandedNodes);
     }
 
-    private SearchResult buildResult(
-            Position start,
-            Position end,
-            Map<Position, Position> predecessor,
-            Map<Position, Direction> directionFromPredecessor,
-            int totalCost,
-            int expandedNodes) {
+    private SearchResult buildResult(Position start,Position end,Map<Position, Position> predecessor,Map<Position, Direction> directionFromPredecessor,int totalCost,int expandedNodes) {
         List<Position> path = new ArrayList<>();
         List<Direction> actions = new ArrayList<>();
         Position current = end;
@@ -134,13 +130,7 @@ public final class AStarSeach implements SearchAlgorithm {
             totalReward = Math.addExact(totalReward, gridMap.cellAt(path.get(i)).reward());
         }
 
-        return new SearchResult(
-                true,
-                List.copyOf(path),
-                List.copyOf(actions),
-                totalCost,
-                totalReward,
-                expandedNodes);
+        return new SearchResult(true,List.copyOf(path),List.copyOf(actions),totalCost,totalReward,expandedNodes);
     }
 
     private Position move(Position position, Direction direction) {

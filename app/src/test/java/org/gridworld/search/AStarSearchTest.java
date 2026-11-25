@@ -13,12 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 class AStarSearchTest {
 
     private static final Cell EMPTY = new Cell(CellType.EMPTY, 0);
     private static final Cell WALL = new Cell(CellType.WALL, 0);
     private static final Cell TERMINAL = new Cell(CellType.TERMINAL, 10);
+
+    @BeforeEach
+    void setUp() {
+        
+    }
+
 
     @Test
     @DisplayName ("Finds the shortest path around a wall")
