@@ -14,12 +14,12 @@ import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 
-public final class AStarPathfinder implements SearchAlgorithm {
+public final class AStarSeach implements SearchAlgorithm {
 
     private final GridMap gridMap;
 
     // ------------- Constructor ------------
-    public AStarPathfinder(GridMap gridMap) {
+    public AStarSeach(GridMap gridMap) {
         this.gridMap = Objects.requireNonNull(gridMap, "Grid map cannot be null");
     }
 
