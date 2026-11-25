@@ -103,6 +103,8 @@ class GridWorldTest {
         world.step(Direction.DOWN);
         world.step(Direction.DOWN);
 
+        assertEquals(new Position(2, 1), world.position());
+
         assertBlockedMovement(Direction.DOWN);
     }
 
@@ -112,6 +114,8 @@ class GridWorldTest {
         world.step(Direction.DOWN);
         world.step(Direction.DOWN);
         world.step(Direction.RIGHT);
+
+        assertEquals(new Position(2, 2), world.position());
 
         assertBlockedMovement(Direction.RIGHT);
     }
@@ -308,6 +312,49 @@ class GridWorldTest {
 
         assertPosition(new Position(0, 1), result);
         assertFalse(result.done());
+    }
+
+    // ---------------- Reset Tests ----------------
+
+    @Test
+    void resetRestoresInitialPosition() {
+        world.step(Direction.RIGHT);
+        world.step(Direction.DOWN);
+
+        world.reset();
+
+        assertEquals(start, world.position());
+    }
+
+    @Test
+    void resetAllowsMovementAfterTerminalState() {
+        world.step(Direction.RIGHT);
+        world.step(Direction.RIGHT);
+
+        world.reset();
+
+        assertEquals(start, world.position());
+
+        StepResult result = world.step(Direction.RIGHT);
+
+        assertPosition(new Position(0, 1), result);
+        assertEquals(-1, result.reward());
+        assertFalse(result.done());
+    }
+
+    @Test
+    void resetRestoresCustomInitialPosition() {
+        Position initialPosition = new Position(2, 1);
+
+        world = new GridWorld(map, initialPosition, -1);
+
+        world.step(Direction.RIGHT);
+
+        assertEquals(new Position(2, 2), world.position());
+
+        world.reset();
+
+        assertEquals(initialPosition, world.position());
     }
 
     // ---------------- Helper Methods ----------------
