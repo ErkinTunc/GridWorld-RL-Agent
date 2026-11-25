@@ -1,8 +1,8 @@
-package org.gridworld.pathfinding;
+package org.gridworld.search;
+
 import org.gridworld.domain.Position;
 
-public interface SearchAlgotihm {
-    
+public interface SearchAlgorithm {
 
     SearchResult search(Position start, Position end);
 }

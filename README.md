@@ -10,29 +10,36 @@ A Java project for building an intelligent agent that navigates a grid, avoids o
 
 The grid environment is independent of the decision-making algorithm, keeping the code simple, testable, and extensible.
 
-![GridWorld UML class diagram](/docs/imgs/UML_GridWorld.png)
+![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.png)
 
 *Planned class structure; not all classes are implemented yet.*
+
+## Project structure
 
 ## Project structure
 
 ```text
 GridWorld-RL-Agent/
 ├── app/
-│   ├── build.gradle.kts
-│   └── src/
-│       ├── main/java/org/gridworld/
-│       │   ├── Main.java
-│       │   ├── domain/          # Position, Direction, CellType, Cell, GridMap
-│       │   └── environment/     # GridWorld, StepResult
-│       └── test/java/org/gridworld/
-│           ├── MainTest.java
-│           ├── domain/          # Domain unit tests
-│           └── environment/     # Environment unit tests
-├── docs/                        # Architecture notes
+│   ├── build.gradle.kts
+│   └── src/
+│       ├── main/java/org/gridworld/
+│       │   ├── Main.java
+│       │   ├── domain/          # Position, CellType, Cell, GridMap
+│       │   ├── environment/     # GridWorld, StepResult, Direction
+│       │   └── search/          # Search algorithms and shared models
+│       │       
+│       └── test/java/org/gridworld/
+│           ├── MainTest.java
+│           ├── domain/          # Domain unit tests
+│           ├── environment/     # Environment unit tests
+│           └── search/          # Search algorithm unit tests (planned)
+├── docs/                        # Architecture notes and UML diagrams
 ├── settings.gradle.kts
 └── gradlew / gradlew.bat
 ```
+
+*The search package and its tests are planned for v0.2.0.*
 
 *Some files in this structure are planned for upcoming milestones.*
 
@@ -55,4 +62,12 @@ Windows PowerShell:
 
 ## Next milestone
 
-Implement and test grid boundaries, obstacles, movement, terminal states, and rewards. Then introduce and evaluate the selected agent algorithm.
+**Status:** v0.1.0 completed - developing v0.2.0 with Backtracking and A* search.
+
+### v0.2.0 — Intelligent Agent
+
+- Introduce a non-mutating transition mechanism.
+- Define shared search models and contracts.
+- Implement Backtracking and A* search.
+- Support bounded reward maximization.
+- Test algorithm correctness and compare performance.

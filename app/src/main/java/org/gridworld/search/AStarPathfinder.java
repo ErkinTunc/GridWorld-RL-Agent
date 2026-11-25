@@ -1,9 +1,4 @@
-package org.gridworld.pathfinding;
-
-import org.gridworld.domain.CellType;
-import org.gridworld.domain.GridMap;
-import org.gridworld.domain.Position;
-import org.gridworld.environment.Direction;
+package org.gridworld.search;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +9,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
-public final class AStarPathfinder implements SearchAlgotihm {
+import org.gridworld.domain.CellType;
+import org.gridworld.domain.GridMap;
+import org.gridworld.domain.Position;
+import org.gridworld.environment.Direction;
+
+public final class AStarPathfinder implements SearchAlgorithm {
 
     private final GridMap gridMap;
 

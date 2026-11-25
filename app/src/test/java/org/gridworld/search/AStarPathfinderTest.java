@@ -1,4 +1,4 @@
-package org.gridworld.pathfinding;
+package org.gridworld.search;
 
 import java.util.List;
 
