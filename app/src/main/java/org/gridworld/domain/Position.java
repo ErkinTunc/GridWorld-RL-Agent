@@ -1,5 +1,4 @@
 package org.gridworld.domain;
 
-public class Position {
-    
+public record Position(int row, int col) {
 }
