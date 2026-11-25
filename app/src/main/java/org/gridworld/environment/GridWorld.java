@@ -48,31 +48,33 @@ public final class GridWorld {
             return new StepResult(currentPosition, 0, true);
         }
 
-        Position nextPosition = calculateNextPosition(direction);
+        StepResult result = calculateTransition(currentPosition, direction);
 
-        if (!map.isWalkable(nextPosition)) {
-            return new StepResult(currentPosition, stepPenalty, false);
+        currentPosition = result.position();
+        done = result.done();
+
+        return result;
+    }
+
+    public StepResult preview(Position from, Direction direction) {
+        Objects.requireNonNull(direction, "Direction cannot be null");
+
+        if (!map.isWalkable(from)) {
+            throw new IllegalArgumentException("Position must be walkable");
         }
 
-        return moveTo(nextPosition);
+        if (map.cellAt(from).type() == CellType.TERMINAL) {
+            return new StepResult(from, 0, true);
+        }
+
+        return calculateTransition(from, direction);
     }
 
     // ---------------- Helper Methods ----------------
 
-    private StepResult moveTo(Position nextPosition) {
-        Cell cell = map.cellAt(nextPosition);
-
-        int reward = Math.addExact(stepPenalty, cell.reward());
-
-        currentPosition = nextPosition;
-        done = cell.type() == CellType.TERMINAL;
-
-        return new StepResult(currentPosition, reward, done);
-    }
-
-    private Position calculateNextPosition(Direction direction) {
-        int row = currentPosition.row();
-        int col = currentPosition.col();
+    private Position calculateNextPosition(Position from, Direction direction) {
+        int row = from.row();
+        int col = from.col();
 
         return switch (direction) {
             case UP -> new Position(row - 1, col);
@@ -80,6 +82,21 @@ public final class GridWorld {
             case LEFT -> new Position(row, col - 1);
             case RIGHT -> new Position(row, col + 1);
         };
+    }
+
+    private StepResult calculateTransition(Position from, Direction direction) {
+        Position nextPosition = calculateNextPosition(from, direction);
+
+        if (!map.isWalkable(nextPosition)) {
+            return new StepResult(from, stepPenalty, false);
+        }
+
+        Cell cell = map.cellAt(nextPosition);
+
+        int reward = Math.addExact(stepPenalty, cell.reward());
+        boolean terminal = cell.type() == CellType.TERMINAL;
+
+        return new StepResult(nextPosition, reward, terminal);
     }
 
     // ---------------- Validation Methods ----------------
