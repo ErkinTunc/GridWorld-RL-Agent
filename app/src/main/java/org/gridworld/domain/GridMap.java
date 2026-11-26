@@ -53,6 +53,20 @@ public final class GridMap {
         return getCellUnchecked(pos);
     }
 
+    public int rewardUpperBound() {
+        int maxReward = 0;
+
+        for (Cell[] row : cells) {
+            for (Cell cell : row) {
+                if (cell.type() != CellType.WALL) {
+                    maxReward = Math.max(maxReward, cell.reward());
+                }
+            }
+        }
+
+        return maxReward;
+    }
+
     // ------ Helper Methods -----
 
     private Cell getCellUnchecked(Position pos) {

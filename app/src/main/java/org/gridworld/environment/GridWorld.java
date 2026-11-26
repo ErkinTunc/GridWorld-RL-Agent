@@ -73,7 +73,7 @@ public final class GridWorld {
     // ---------------- Helper Methods ----------------
 
     private StepResult calculateTransition(Position from, Direction direction) {
-        Position nextPosition = direction.calculateNextPosition(from,direction);
+        Position nextPosition = direction.calculateNextPosition(from, direction);
 
         if (!map.isWalkable(nextPosition)) {
             return new StepResult(from, stepPenalty, false);
@@ -103,5 +103,11 @@ public final class GridWorld {
         if (stepPenalty > 0) {
             throw new IllegalArgumentException("Step penalty must be non-positive");
         }
+    }
+
+    // ----------------- Getters ------------------
+
+    public GridMap getMap() {
+        return map;
     }
 }
