@@ -88,6 +88,16 @@ class SearchStateTest {
         assertEquals(visited, state.visitedPositions());
     }
 
+    @Test
+    void preventsModificationOfVisitedPositions() {
+        Set<Position> mutableVisited = new HashSet<>(visited);
+
+        SearchState state = new SearchState(position, 0, 0, mutableVisited);
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> state.visitedPositions().clear());
+    }
+
     // ---------------- Validation Tests -----------------
 
     @Test
@@ -119,5 +129,14 @@ class SearchStateTest {
     void rejectsMissingCurrentPosition() {
         assertThrows(IllegalArgumentException.class,
                 () -> new SearchState(position, 0, 0, Set.of()));
+    }
+
+    @Test
+    void rejectsNullElementInVisitedPositions() {
+        Set<Position> positions = new HashSet<>(visited);
+        positions.add(null);
+
+        assertThrows(NullPointerException.class,
+                () -> new SearchState(position, 0, 0, positions));
     }
 }

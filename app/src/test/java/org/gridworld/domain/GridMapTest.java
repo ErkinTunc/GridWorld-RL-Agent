@@ -197,6 +197,39 @@ class GridMapTest {
                 });
     }
 
+    // ------------------- Reward Tests -------------------
+
+    @Test
+    void returnsHighestWalkableReward() {
+        GridMap rewardMap = new GridMap(new Cell[][] {
+                { empty, goal },
+                { new Cell(CellType.EMPTY, 20), empty }
+        });
+
+        assertEquals(20, rewardMap.rewardUpperBound());
+    }
+
+    @Test
+    void ignoresWallRewards() {
+        GridMap rewardMap = new GridMap(new Cell[][] {
+                { empty, new Cell(CellType.WALL, 100), goal }
+        });
+
+        assertEquals(10, rewardMap.rewardUpperBound());
+    }
+
+    @Test
+    void returnsZeroWhenAllRewardsAreNegative() {
+        GridMap rewardMap = new GridMap(new Cell[][] {
+                {
+                        new Cell(CellType.EMPTY, -3),
+                        new Cell(CellType.TERMINAL, -10)
+                }
+        });
+
+        assertEquals(0, rewardMap.rewardUpperBound());
+    }
+
     // ---------------- Encapsulation Tests ----------------
 
     @Test
