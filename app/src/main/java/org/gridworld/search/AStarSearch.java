@@ -96,8 +96,7 @@ public final class AStarSearch implements SearchAlgorithm {
         int tentativeCost = current.costFromStart() + 1;
 
         for (Direction direction : Direction.values()) {
-            Position neighbor = Direction.calculateNextPosition(
-                    current.position(), direction);
+            Position neighbor = direction.moveFrom(current.position());
 
             if (!canVisit(neighbor, end)) {
                 continue;

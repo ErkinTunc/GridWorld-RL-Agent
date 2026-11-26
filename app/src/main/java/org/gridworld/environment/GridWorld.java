@@ -76,7 +76,7 @@ public final class GridWorld {
     // ---------------- Helper Methods ----------------
 
     private StepResult calculateTransition(Position from, Direction direction) {
-        Position nextPosition = Direction.calculateNextPosition(from, direction);
+        Position nextPosition = direction.moveFrom(from);
 
         if (!map.isWalkable(nextPosition)) {
             return new StepResult(from, stepPenalty, false);
