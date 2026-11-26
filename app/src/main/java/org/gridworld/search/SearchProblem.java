@@ -7,9 +7,9 @@ import org.gridworld.environment.GridWorld;
 import org.gridworld.environment.StepResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.HashSet;
 import java.util.Set;
 
 public final class SearchProblem {
@@ -69,15 +69,7 @@ public final class SearchProblem {
                 continue;
             }
 
-            Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
-
-            visitedPositions.add(result.position());
-
-            SearchState nextState = new SearchState(
-                    result.position(),
-                    state.stepsUsed() + 1,
-                    state.totalReward() + result.reward(),
-                    visitedPositions);
+            SearchState nextState = createNextState(state, result);
 
             long cost = calculateCost(nextState, result.reward());
 
@@ -96,6 +88,19 @@ public final class SearchProblem {
     private boolean isValidSuccessor(SearchState state, StepResult result) {
         return !result.position().equals(state.position())
                 && (!result.done() || result.position().equals(goal));
+    }
+
+    private static SearchState createNextState(SearchState state, StepResult result) {
+
+        Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
+
+        visitedPositions.add(result.position());
+
+        return new SearchState(
+                result.position(),
+                state.stepsUsed() + 1,
+                state.totalReward() + result.reward(),
+                visitedPositions);
     }
 
     private long calculateCost(SearchState state, int reward) {
@@ -117,18 +122,15 @@ public final class SearchProblem {
             int maxSteps) {
 
         if (!map.isWalkable(start) || !map.isWalkable(goal)) {
-            throw new IllegalArgumentException(
-                    "Start and goal must be walkable");
+            throw new IllegalArgumentException("Start and goal must be walkable");
         }
 
         if (map.cellAt(start).isTerminal()) {
-            throw new IllegalArgumentException(
-                    "Start cannot be terminal");
+            throw new IllegalArgumentException("Start cannot be terminal");
         }
 
         if (maxSteps < 0) {
-            throw new IllegalArgumentException(
-                    "Max steps cannot be negative");
+            throw new IllegalArgumentException("Max steps cannot be negative");
         }
     }
 }
