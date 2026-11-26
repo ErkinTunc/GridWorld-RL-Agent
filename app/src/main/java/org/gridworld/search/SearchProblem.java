@@ -1,6 +1,5 @@
 package org.gridworld.search;
 
-import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
@@ -122,7 +121,7 @@ public final class SearchProblem {
                     "Start and goal must be walkable");
         }
 
-        if (map.cellAt(start).type() == CellType.TERMINAL) {
+        if (map.cellAt(start).isTerminal()) {
             throw new IllegalArgumentException(
                     "Start cannot be terminal");
         }

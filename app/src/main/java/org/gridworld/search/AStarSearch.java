@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
-import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
@@ -138,7 +137,7 @@ public final class AStarSearch implements SearchAlgorithm {
         }
 
         return neighbor.equals(end)
-                || gridMap.cellAt(neighbor).type() != CellType.TERMINAL;
+                || !gridMap.cellAt(neighbor).isTerminal();
     }
 
     // ---------------- Path Reconstruction Methods ----------------
