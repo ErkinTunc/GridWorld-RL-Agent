@@ -2,6 +2,7 @@ package org.gridworld.environment;
 
 import org.gridworld.domain.Position;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -28,6 +29,7 @@ class StepResultTest {
     // ---------------- Result Tests ----------------
 
     @Test
+    @DisplayName ("StepResult stores position, reward and terminal state correctly")
     void storesStepResult() {
         assertEquals(position, normalResult.position());
         assertEquals(-1, normalResult.reward());
@@ -37,12 +39,14 @@ class StepResultTest {
     // ---------------- Terminal State Tests ----------------
 
     @Test
+    @DisplayName ("StepResult identifies terminal and non-terminal states correctly")
     void identifiesTerminalState() {
         assertTrue(terminalResult.isTerminal());
         assertTrue(terminalResult.isTerminal());
     }
 
     @Test
+    @DisplayName ("StepResult identifies terminal and non-terminal states correctly")
     void identifiesNonTerminalState() {
         assertFalse(normalResult.isTerminal());
     }
@@ -50,6 +54,7 @@ class StepResultTest {
     // ---------------- Exception Tests ----------------
 
     @Test
+    @DisplayName ("StepResult rejects null position")
     void rejectsNullPosition() {
         assertThrows(NullPointerException.class,
                 new Executable() {

@@ -2,10 +2,10 @@ package org.gridworld.search;
 
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class TransitionTest {
 
@@ -17,6 +17,7 @@ class TransitionTest {
     // ---------------------- Tests ----------------------
 
     @Test
+    @DisplayName ("Transition stores state, action, reward and cost correctly")
     void storesTransitionValues() {
         Transition transition = new Transition(state, Direction.RIGHT, -1, 12L);
 
@@ -29,6 +30,7 @@ class TransitionTest {
     // ---------------- Validation Tests -----------------
 
     @Test
+    @DisplayName ("Transition accepts zero cost")
     void acceptsZeroCost() {
         Transition transition = new Transition(state, Direction.RIGHT, 10, 0L);
 
@@ -37,6 +39,7 @@ class TransitionTest {
     }
 
     @Test
+    @DisplayName ("Transition accepts zero reward")
     void acceptsZeroReward() {
         Transition transition = new Transition(state, Direction.RIGHT, 0, 1L);
 
@@ -44,18 +47,21 @@ class TransitionTest {
     }
 
     @Test
+    @DisplayName ("Transition rejects null state")
     void rejectsNullState() {
         assertThrows(NullPointerException.class,
                 () -> new Transition(null, Direction.RIGHT, -1, 12L));
     }
 
     @Test
+    @DisplayName ("Transition rejects null action")
     void rejectsNullAction() {
         assertThrows(NullPointerException.class,
                 () -> new Transition(state, null, -1, 12L));
     }
 
     @Test
+    @DisplayName ("Transition rejects negative cost")
     void rejectsNegativeCost() {
         assertThrows(IllegalArgumentException.class,
                 () -> new Transition(state, Direction.RIGHT, -1, -1L));

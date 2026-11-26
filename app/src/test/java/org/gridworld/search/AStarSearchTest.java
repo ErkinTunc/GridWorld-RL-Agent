@@ -6,6 +6,7 @@ import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.gridworld.environment.GridWorld;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,6 +30,7 @@ class AStarSearchTest {
         // ---------------- Path Finding Tests ----------------
 
         @Test
+        @DisplayName ("A* search finds path around wall")
         void findsPathAroundWall() {
                 Position goal = new Position(2, 2);
 
@@ -50,6 +52,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName ("A* search reports when no path exists")
         void reportsWhenNoPathExists() {
                 SearchProblem problem = createProblem(new Cell[][] {
                                 { EMPTY, WALL, TERMINAL },
@@ -64,6 +67,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName ("A* search does not route through another terminal cell")
         void doesNotRouteThroughAnotherTerminal() {
                 Position trap = new Position(0, 1);
 
@@ -82,6 +86,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName ("A* search finds path with multiple terminal cells")
         void returnedActionsFollowTheReturnedPath() {
                 SearchProblem problem = createProblem(new Cell[][] {
                                 { EMPTY, EMPTY },
@@ -105,6 +110,7 @@ class AStarSearchTest {
         // ---------------- Reward Tests ----------------
 
         @Test
+        @DisplayName ("A* search prefers higher reward over shorter path")
         void prefersHigherRewardOverShorterPath() {
                 Cell bonus = new Cell(CellType.EMPTY, 3);
                 Cell trap = new Cell(CellType.TERMINAL, -10);
@@ -129,6 +135,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName("A* search supports negative total reward")
         void supportsNegativeTotalReward() {
                 Cell negativeGoal = new Cell(CellType.TERMINAL, -10);
 
@@ -144,6 +151,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName("A* search supports reward beyond integer range")
         void supportsRewardBeyondIntegerRange() {
                 Cell bonus = new Cell(CellType.EMPTY, Integer.MAX_VALUE);
                 Cell goal = new Cell(CellType.TERMINAL, Integer.MAX_VALUE);
@@ -162,6 +170,7 @@ class AStarSearchTest {
         // ---------------- Edge Case Tests ----------------
 
         @Test
+        @DisplayName ("A* search respects max steps")
         void respectsMaxSteps() {
                 SearchProblem problem = createProblem(new Cell[][] {
                                 { EMPTY, EMPTY, TERMINAL }
@@ -171,6 +180,7 @@ class AStarSearchTest {
         }
 
         @Test
+        @DisplayName ("A* search finds path when max steps is sufficient")
         void startEqualsGoalProducesEmptyActionSequence() {
                 SearchProblem problem = createProblem(new Cell[][] {
                                 { EMPTY }
@@ -188,6 +198,7 @@ class AStarSearchTest {
         // ---------------- State Integrity Tests ----------------
 
         @Test
+        @DisplayName ("A* search does not change world state")
         void doesNotChangeWorldState() {
                 GridMap map = new GridMap(new Cell[][] {
                                 { EMPTY, TERMINAL }
@@ -205,6 +216,7 @@ class AStarSearchTest {
         // ---------------- Validation Tests ----------------
 
         @Test
+        @DisplayName ("A* search rejects null problem")
         void rejectsNullProblem() {
                 assertThrows(NullPointerException.class,
                                 () -> algorithm.search(null));

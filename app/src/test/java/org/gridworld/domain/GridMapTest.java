@@ -1,6 +1,7 @@
 package org.gridworld.domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -37,12 +38,14 @@ class GridMapTest {
     // ---------------- Boundary Tests ----------------
 
     @Test
+    @DisplayName ("GridMap correctly identifies positions inside and outside the grid")
     void acceptsPositionsInsideGrid() {
         assertTrue(map.isInside(new Position(0, 0)));
         assertTrue(map.isInside(new Position(1, 2)));
     }
 
     @Test
+    @DisplayName ("GridMap correctly identifies positions outside the grid")
     void rejectsPositionsOutsideGrid() {
         assertFalse(map.isInside(new Position(-1, 0)));
         assertFalse(map.isInside(new Position(0, -1)));
@@ -53,17 +56,20 @@ class GridMapTest {
     // ---------------- Walkability Tests ----------------
 
     @Test
+    @DisplayName ("GridMap correctly identifies walkable and non-walkable positions")
     void emptyAndTerminalCellsAreWalkable() {
         assertTrue(map.isWalkable(new Position(0, 0)));
         assertTrue(map.isWalkable(new Position(0, 2)));
     }
 
     @Test
+    @DisplayName ("GridMap correctly identifies non-walkable positions")
     void wallIsNotWalkable() {
         assertFalse(map.isWalkable(new Position(0, 1)));
     }
 
     @Test
+    @DisplayName ("GridMap correctly identifies positions outside the grid as non-walkable")
     void outsidePositionIsNotWalkable() {
         assertFalse(map.isWalkable(new Position(-1, 0)));
     }
@@ -71,6 +77,7 @@ class GridMapTest {
     // ---------------- Cell Access Tests ----------------
 
     @Test
+    @DisplayName ("GridMap returns correct cell for valid position")
     void returnsCorrectCell() {
         assertEquals(empty, map.cellAt(new Position(0, 0)));
         assertEquals(wall, map.cellAt(new Position(0, 1)));
@@ -79,6 +86,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap rejects positions outside the grid when accessing cells")
     void cellAtRejectsOutsidePosition() {
         assertThrows(IndexOutOfBoundsException.class,
                 new Executable() {
@@ -92,6 +100,7 @@ class GridMapTest {
     // ---------------- Position Validation Tests ----------------
 
     @Test
+    @DisplayName ("GridMap rejects null position for isInside, isWalkable, and cellAt methods")
     void rejectsNullPosition() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -121,6 +130,7 @@ class GridMapTest {
     // ---------------- Grid Validation Tests ----------------
 
     @Test
+    @DisplayName ("GridMap constructor rejects null, empty, non-rectangular grids and null rows or cells")
     void rejectsNullGrid() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -132,6 +142,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap constructor rejects empty grid")
     void rejectsEmptyGrid() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -143,6 +154,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap constructor rejects empty row")
     void rejectsEmptyRow() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -153,7 +165,9 @@ class GridMapTest {
                 });
     }
 
+
     @Test
+    @DisplayName ("GridMap constructor rejects null row or null cell")
     void rejectsNullRow() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -173,6 +187,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap constructor rejects non-rectangular grid")
     void rejectsNonRectangularGrid() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -187,6 +202,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap constructor rejects null cell")
     void rejectsNullCell() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -200,6 +216,7 @@ class GridMapTest {
     // ------------------- Reward Tests -------------------
 
     @Test
+    @DisplayName ("GridMap returns the highest reward among walkable cells")
     void returnsHighestWalkableReward() {
         GridMap rewardMap = new GridMap(new Cell[][] {
                 { empty, goal },
@@ -210,6 +227,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap ignores rewards from non-walkable cells")
     void ignoresWallRewards() {
         GridMap rewardMap = new GridMap(new Cell[][] {
                 { empty, new Cell(CellType.WALL, 100), goal }
@@ -219,6 +237,7 @@ class GridMapTest {
     }
 
     @Test
+    @DisplayName ("GridMap returns zero when all walkable cells have negative rewards")
     void returnsZeroWhenAllRewardsAreNegative() {
         GridMap rewardMap = new GridMap(new Cell[][] {
                 {
@@ -233,6 +252,7 @@ class GridMapTest {
     // ---------------- Encapsulation Tests ----------------
 
     @Test
+    @DisplayName ("GridMap protects its internal grid from external changes")
     void protectsGridFromExternalChanges() {
         cells[0][0] = wall;
         cells[1] = new Cell[] { wall, wall, wall };

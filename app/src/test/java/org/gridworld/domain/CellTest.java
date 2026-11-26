@@ -1,17 +1,18 @@
 package org.gridworld.domain;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class CellTest {
 
     // ------------------- Cell Tests --------------------
 
     @Test
+    @DisplayName ("Cell stores type and reward correctly")
     void storesTypeAndReward() {
         Cell cell = new Cell(CellType.TERMINAL, 10);
 
@@ -20,6 +21,7 @@ class CellTest {
     }
 
     @Test
+    @DisplayName ("Cell allows negative reward")
     void allowsNegativeReward() {
         Cell cell = new Cell(CellType.TERMINAL, -10);
 
@@ -29,6 +31,7 @@ class CellTest {
     // ---------------- Walkability Tests ----------------
 
     @Test
+    @DisplayName ("Empty cell is walkable")
     void emptyCellIsWalkable() {
         Cell cell = new Cell(CellType.EMPTY, 0);
 
@@ -36,6 +39,7 @@ class CellTest {
     }
 
     @Test
+    @DisplayName ("Terminal cell is walkable")
     void terminalCellIsWalkable() {
         Cell cell = new Cell(CellType.TERMINAL, 10);
 
@@ -43,6 +47,7 @@ class CellTest {
     }
 
     @Test
+    @DisplayName ("Wall cell is not walkable")
     void wallCellIsNotWalkable() {
         Cell cell = new Cell(CellType.WALL, 0);
 
@@ -52,6 +57,7 @@ class CellTest {
     // ----------------- Terminal Tests ------------------
 
     @Test
+    @DisplayName ("Terminal cell is identified correctly")
     void identifiesTerminalCell() {
         Cell cell = new Cell(CellType.TERMINAL, 10);
 
@@ -59,6 +65,7 @@ class CellTest {
     }
 
     @Test
+    @DisplayName ("Empty cell is not terminal")
     void emptyCellIsNotTerminal() {
         Cell cell = new Cell(CellType.EMPTY, 0);
 
@@ -66,6 +73,7 @@ class CellTest {
     }
 
     @Test
+    @DisplayName ("Wall cell is not terminal")
     void wallCellIsNotTerminal() {
         Cell cell = new Cell(CellType.WALL, 0);
 
@@ -75,6 +83,7 @@ class CellTest {
     // ---------------- Validation Tests -----------------
 
     @Test
+    @DisplayName ("Cell constructor rejects null type")
     void rejectsNullType() {
         assertThrows(NullPointerException.class,
                 () -> new Cell(null, 0));

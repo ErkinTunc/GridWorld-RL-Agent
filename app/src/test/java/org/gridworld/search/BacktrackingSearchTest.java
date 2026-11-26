@@ -1,19 +1,19 @@
 package org.gridworld.search;
 
+import java.util.List;
+
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.gridworld.environment.GridWorld;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class BacktrackingSearchTest {
 
@@ -29,6 +29,7 @@ class BacktrackingSearchTest {
     // ---------------- Path Finding Tests ----------------
 
     @Test
+    @DisplayName ("Backtracking search finds path with multiple terminal cells")
     void findsPath() {
         Position goal = new Position(0, 1);
 
@@ -46,6 +47,7 @@ class BacktrackingSearchTest {
     }
 
     @Test
+    @DisplayName ("Backtracking search reports when no path exists")
     void reportsWhenNoPathExists() {
         SearchProblem problem = createProblem(new Cell[][] {
                 { EMPTY, WALL, TERMINAL }
@@ -61,6 +63,7 @@ class BacktrackingSearchTest {
     // ---------------- Reward Tests ----------------
 
     @Test
+    @DisplayName ("Backtracking search prefers higher reward over shorter path")
     void prefersHigherRewardOverShorterPath() {
         Cell bonus = new Cell(CellType.EMPTY, 3);
 
@@ -83,6 +86,7 @@ class BacktrackingSearchTest {
     }
 
     @Test
+    @DisplayName ("Backtracking search supports negative total reward")
     void supportsNegativeTotalReward() {
         Cell negativeGoal = new Cell(CellType.TERMINAL, -10);
 
@@ -98,6 +102,7 @@ class BacktrackingSearchTest {
     }
 
     @Test
+    @DisplayName ("Backtracking search supports reward beyond integer range")
     void supportsRewardBeyondIntegerRange() {
         Cell bonus = new Cell(CellType.EMPTY, Integer.MAX_VALUE);
         Cell goal = new Cell(CellType.TERMINAL, Integer.MAX_VALUE);
@@ -114,6 +119,7 @@ class BacktrackingSearchTest {
     }
 
     @Test
+@DisplayName ("Backtracking search continues searching after first solution")
     void continuesSearchingAfterFirstSolution() {
         Cell bonus = new Cell(CellType.EMPTY, 3);
 
@@ -137,6 +143,7 @@ class BacktrackingSearchTest {
     // ---------------- Edge Case Tests ----------------
 
     @Test
+    @DisplayName ("Backtracking search respects max steps")
     void respectsMaxSteps() {
         SearchProblem problem = createProblem(new Cell[][] {
                 { EMPTY, EMPTY, TERMINAL }
@@ -146,6 +153,7 @@ class BacktrackingSearchTest {
     }
 
     @Test
+    @DisplayName ("Backtracking search finds path when max steps is sufficient")
     void startEqualsGoalProducesEmptyActionSequence() {
         SearchProblem problem = createProblem(new Cell[][] {
                 { EMPTY }
@@ -163,6 +171,7 @@ class BacktrackingSearchTest {
     // ---------------- State Integrity Tests ----------------
 
     @Test
+    @DisplayName ("Backtracking search does not change world state")
     void doesNotChangeWorldState() {
         GridMap map = new GridMap(new Cell[][] {
                 { EMPTY, TERMINAL }
@@ -180,6 +189,7 @@ class BacktrackingSearchTest {
     // ---------------- Validation Tests ----------------
 
     @Test
+    @DisplayName ("Backtracking search rejects null problem")
     void rejectsNullProblem() {
         assertThrows(NullPointerException.class,
                 () -> algorithm.search(null));

@@ -1,9 +1,11 @@
 package org.gridworld.search;
 
 import org.gridworld.domain.Position;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SearchStateTest {
 
@@ -12,6 +14,7 @@ class SearchStateTest {
     // ---------------------- Tests ----------------------
 
     @Test
+    @DisplayName ("Search state stores position, steps used and total reward correctly")
     void storesStateValues() {
         SearchState state = new SearchState(position, 0, 0L);
 
@@ -21,7 +24,7 @@ class SearchStateTest {
     }
 
     // ------------------ Equality Tests ------------------
-
+    @DisplayName ("Search state compares by value correctly")
     @Test
     void comparesStatesByValue() {
         SearchState first = new SearchState(position, 2, 5L);
@@ -32,6 +35,7 @@ class SearchStateTest {
     }
 
     @Test
+    @DisplayName ("Search state distinguishes different positions correctly")
     void distinguishesDifferentPositions() {
         SearchState first = new SearchState(position, 2, 5L);
         SearchState second = new SearchState(
@@ -41,6 +45,7 @@ class SearchStateTest {
     }
 
     @Test
+    @DisplayName ("Search state distinguishes different step counts correctly")
     void distinguishesDifferentStepCounts() {
         SearchState first = new SearchState(position, 2, 5L);
         SearchState second = new SearchState(position, 4, 5L);
@@ -49,6 +54,7 @@ class SearchStateTest {
     }
 
     @Test
+    @DisplayName ("Search state distinguishes different rewards correctly")
     void distinguishesDifferentRewards() {
         SearchState first = new SearchState(position, 2, 5L);
         SearchState second = new SearchState(position, 2, 10L);
@@ -59,6 +65,7 @@ class SearchStateTest {
     // ---------------- Validation Tests -----------------
 
     @Test
+    @DisplayName ("Search state accepts negative reward")
     void acceptsNegativeReward() {
         SearchState state = new SearchState(position, 2, -5L);
 
@@ -66,12 +73,14 @@ class SearchStateTest {
     }
 
     @Test
+    @DisplayName ("Search state rejects null position")
     void rejectsNullPosition() {
         assertThrows(NullPointerException.class,
                 () -> new SearchState(null, 0, 0L));
     }
 
     @Test
+    @DisplayName ("Search state rejects negative steps")
     void rejectsNegativeSteps() {
         assertThrows(IllegalArgumentException.class,
                 () -> new SearchState(position, -1, 0L));

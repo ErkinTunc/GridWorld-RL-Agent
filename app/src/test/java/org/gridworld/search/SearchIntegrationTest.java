@@ -1,5 +1,7 @@
 package org.gridworld.search;
 
+import java.util.List;
+
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
@@ -7,14 +9,12 @@ import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.gridworld.environment.GridWorld;
 import org.gridworld.environment.StepResult;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class SearchIntegrationTest {
 
@@ -35,6 +35,7 @@ class SearchIntegrationTest {
     // ---------------- Path Finding Tests ----------------
 
     @Test
+    @DisplayName ("Search algorithms find path in open grid")
     void solvesOpenGrid() {
         Cell[][] cells = {
                 { EMPTY, EMPTY, EMPTY },
@@ -46,6 +47,7 @@ class SearchIntegrationTest {
     }
 
     @Test
+    @DisplayName ("Search algorithms find path with obstacles")
     void solvesGridWithObstacles() {
         Cell[][] cells = {
                 { EMPTY, WALL, GOAL },
@@ -57,6 +59,7 @@ class SearchIntegrationTest {
     }
 
     @Test
+    @DisplayName ("Search algorithms find path through narrow passage")
     void solvesNarrowPassage() {
         Cell[][] cells = {
                 { EMPTY, EMPTY, WALL },
@@ -68,6 +71,7 @@ class SearchIntegrationTest {
     }
 
     @Test
+    @DisplayName ("Search algorithms report when target is unreachable")
     void reportsUnreachableTarget() {
         Cell[][] cells = {
                 { EMPTY, WALL, GOAL },
@@ -94,6 +98,7 @@ class SearchIntegrationTest {
     // ---------------- Reward Tests ----------------
 
     @Test
+    @DisplayName ("Search algorithms select path with highest reward")
     void selectsHighestRewardPath() {
         Cell[][] cells = {
                 { EMPTY, EMPTY, GOAL },
