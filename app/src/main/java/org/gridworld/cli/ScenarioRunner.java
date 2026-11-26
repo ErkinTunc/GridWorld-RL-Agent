@@ -47,7 +47,10 @@ public final class ScenarioRunner {
             executeActions(result.actions());
         }
 
-        return new SearchMetrics(result, executionTime);
+        return new SearchMetrics(
+                result,
+                executionTime,
+                world.position());
     }
 
     // ---------------- Helper Methods ----------------

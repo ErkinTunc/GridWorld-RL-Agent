@@ -128,8 +128,7 @@ public final class ConsolePrinter {
 
     public static void printResult(
             String algorithm,
-            SearchMetrics metrics,
-            Position finalPosition) {
+            SearchMetrics metrics) {
 
         SearchResult result = metrics.result();
 
@@ -151,7 +150,7 @@ public final class ConsolePrinter {
         printRow("Total reward", result.totalReward(), GREEN);
         printRow("Total cost", result.totalCost(), YELLOW);
         printRow("Steps", result.actions().size(), RESET);
-        printRow("Final position", formatPosition(finalPosition), GREEN);
+        printRow("Final position", formatPosition(metrics.finalPosition()), GREEN);
 
         printPerformance(metrics);
 

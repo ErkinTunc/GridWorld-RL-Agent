@@ -114,8 +114,7 @@ public class Main {
 
             results.put(name, result);
 
-            ConsolePrinter.printResult(
-                    name, metrics, world.position());
+            ConsolePrinter.printResult(name, metrics);
 
             if (result.pathFound()) {
 
