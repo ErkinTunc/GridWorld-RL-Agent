@@ -62,6 +62,8 @@ public final class ConsolePrinter {
         System.out.println("2. Alternative Optimal Paths");
         System.out.println("3. Obstacle Avoidance");
         System.out.println("4. Unreachable Goal");
+        System.out.println("5. Open Grid");
+        System.out.println("6. Narrow Passage");
         System.out.println("0. Exit");
 
         printSeparator();
@@ -156,7 +158,7 @@ public final class ConsolePrinter {
         printSeparator();
     }
 
-    // ---------------- Result Display Helpers  ----------------
+    // ---------------- Result Display Helpers ----------------
 
     private static void printPerformance(SearchMetrics metrics) {
 

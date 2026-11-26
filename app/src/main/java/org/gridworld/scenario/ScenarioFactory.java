@@ -5,121 +5,167 @@ import org.gridworld.domain.CellType;
 import org.gridworld.domain.Position;
 
 import java.util.Optional;
+import java.util.List;
 
 public final class ScenarioFactory {
 
-    // ---------------- Default Configuration ----------------
+        // ---------------- Default Configuration ----------------
 
-    private static final Position START = new Position(0, 0);
-    private static final int STEP_PENALTY = -1;
+        private static final Position START = new Position(0, 0);
+        private static final int STEP_PENALTY = -1;
 
-    // ---------------- Cell Definitions ----------------
+        // ---------------- Cell Definitions ----------------
 
-    private static final Cell EMPTY = new Cell(CellType.EMPTY, 0);
-    private static final Cell WALL = new Cell(CellType.WALL, 0);
-    private static final Cell GOAL = new Cell(CellType.TERMINAL, 10);
-    private static final Cell TRAP = new Cell(CellType.TERMINAL, -10);
-    private static final Cell BONUS_3 = new Cell(CellType.EMPTY, 3);
-    private static final Cell BONUS_4 = new Cell(CellType.EMPTY, 4);
+        private static final Cell EMPTY = new Cell(CellType.EMPTY, 0);
+        private static final Cell WALL = new Cell(CellType.WALL, 0);
+        private static final Cell GOAL = new Cell(CellType.TERMINAL, 10);
+        private static final Cell TRAP = new Cell(CellType.TERMINAL, -10);
+        private static final Cell BONUS_3 = new Cell(CellType.EMPTY, 3);
+        private static final Cell BONUS_4 = new Cell(CellType.EMPTY, 4);
 
-    // ---------------- Constructor ----------------
+        // ---------------- Scenario Catalog ----------------
 
-    private ScenarioFactory() {
-    }
+        private static final List<Scenario> SCENARIOS = List.of(
+                        rewardMaximization(),
+                        alternativeOptimalPaths(),
+                        obstacleAvoidance(),
+                        unreachableGoal(),
+                        openGrid(),
+                        narrowPassage());
 
-    // ---------------- Public Methods ----------------
+        // ---------------- Constructor ----------------
 
-    public static Optional<Scenario> create(String choice) {
+        private ScenarioFactory() {
+        }
 
-        return switch (choice) {
-            case "1" -> Optional.of(rewardMaximization());
-            case "2" -> Optional.of(alternativeOptimalPaths());
-            case "3" -> Optional.of(obstacleAvoidance());
-            case "4" -> Optional.of(unreachableGoal());
-            default -> Optional.empty();
-        };
-    }
+        // ---------------- Public Methods ----------------
 
-    // ---------------- Scenario Definitions ----------------
+        public static Optional<Scenario> create(String choice) {
 
-    private static Scenario rewardMaximization() {
+                for (int index = 0; index < SCENARIOS.size(); index++) {
 
-        Cell[][] cells = {
-                { EMPTY, EMPTY, EMPTY, GOAL },
-                { WALL, BONUS_3, TRAP, WALL },
-                { EMPTY, EMPTY, EMPTY, EMPTY },
-                { EMPTY, EMPTY, EMPTY, EMPTY }
-        };
+                        if (Integer.toString(index + 1).equals(choice)) {
+                                return Optional.of(SCENARIOS.get(index));
+                        }
+                }
 
-        return createScenario(
-                "REWARD MAXIMIZATION",
-                cells,
-                new Position(0, 3),
-                5);
-    }
+                return Optional.empty();
+        }
 
-    private static Scenario alternativeOptimalPaths() {
+        public static List<Scenario> createAll() {
+                return SCENARIOS;
+        }
 
-        Cell[][] cells = {
-                { EMPTY, BONUS_4, EMPTY, EMPTY },
-                { EMPTY, WALL, WALL, EMPTY },
-                { EMPTY, WALL, WALL, EMPTY },
-                { EMPTY, BONUS_4, EMPTY, GOAL }
-        };
+        // ---------------- Scenario Definitions ----------------
 
-        return createScenario(
-                "ALTERNATIVE OPTIMAL PATHS",
-                cells,
-                new Position(3, 3),
-                6);
-    }
+        private static Scenario rewardMaximization() {
 
-    private static Scenario obstacleAvoidance() {
+                Cell[][] cells = {
+                                { EMPTY, EMPTY, EMPTY, GOAL },
+                                { WALL, BONUS_3, TRAP, WALL },
+                                { EMPTY, EMPTY, EMPTY, EMPTY },
+                                { EMPTY, EMPTY, EMPTY, EMPTY }
+                };
 
-        Cell[][] cells = {
-                { EMPTY, WALL, EMPTY, GOAL },
-                { EMPTY, WALL, EMPTY, EMPTY },
-                { EMPTY, WALL, EMPTY, EMPTY },
-                { EMPTY, EMPTY, EMPTY, EMPTY }
-        };
+                return createScenario(
+                                "REWARD MAXIMIZATION",
+                                cells,
+                                new Position(0, 3),
+                                5);
+        }
 
-        return createScenario(
-                "OBSTACLE AVOIDANCE",
-                cells,
-                new Position(0, 3),
-                9);
-    }
+        private static Scenario alternativeOptimalPaths() {
 
-    private static Scenario unreachableGoal() {
+                Cell[][] cells = {
+                                { EMPTY, BONUS_4, EMPTY, EMPTY },
+                                { EMPTY, WALL, WALL, EMPTY },
+                                { EMPTY, WALL, WALL, EMPTY },
+                                { EMPTY, BONUS_4, EMPTY, GOAL }
+                };
 
-        Cell[][] cells = {
-                { EMPTY, WALL, EMPTY, GOAL },
-                { EMPTY, WALL, EMPTY, EMPTY },
-                { EMPTY, WALL, EMPTY, EMPTY },
-                { EMPTY, WALL, EMPTY, EMPTY }
-        };
+                return createScenario(
+                                "ALTERNATIVE OPTIMAL PATHS",
+                                cells,
+                                new Position(3, 3),
+                                6);
+        }
 
-        return createScenario(
-                "UNREACHABLE GOAL",
-                cells,
-                new Position(0, 3),
-                9);
-    }
+        private static Scenario obstacleAvoidance() {
 
-    // ---------------- Factory Helpers ----------------
+                Cell[][] cells = {
+                                { EMPTY, WALL, EMPTY, GOAL },
+                                { EMPTY, WALL, EMPTY, EMPTY },
+                                { EMPTY, WALL, EMPTY, EMPTY },
+                                { EMPTY, EMPTY, EMPTY, EMPTY }
+                };
 
-    private static Scenario createScenario(
-            String title,
-            Cell[][] cells,
-            Position goal,
-            int maxSteps) {
+                return createScenario(
+                                "OBSTACLE AVOIDANCE",
+                                cells,
+                                new Position(0, 3),
+                                9);
+        }
 
-        return new Scenario(
-                title,
-                cells,
-                START,
-                goal,
-                maxSteps,
-                STEP_PENALTY);
-    }
+        private static Scenario unreachableGoal() {
+
+                Cell[][] cells = {
+                                { EMPTY, WALL, EMPTY, GOAL },
+                                { EMPTY, WALL, EMPTY, EMPTY },
+                                { EMPTY, WALL, EMPTY, EMPTY },
+                                { EMPTY, WALL, EMPTY, EMPTY }
+                };
+
+                return createScenario(
+                                "UNREACHABLE GOAL",
+                                cells,
+                                new Position(0, 3),
+                                9);
+        }
+
+        private static Scenario openGrid() {
+
+                Cell[][] cells = {
+                                { EMPTY, EMPTY, EMPTY },
+                                { EMPTY, EMPTY, EMPTY },
+                                { EMPTY, EMPTY, GOAL }
+                };
+
+                return createScenario(
+                                "OPEN GRID",
+                                cells,
+                                new Position(2, 2),
+                                6);
+        }
+
+        private static Scenario narrowPassage() {
+
+                Cell[][] cells = {
+                                { EMPTY, EMPTY, WALL },
+                                { WALL, EMPTY, WALL },
+                                { WALL, EMPTY, GOAL }
+                };
+
+                return createScenario(
+                                "NARROW PASSAGE",
+                                cells,
+                                new Position(2, 2),
+                                6);
+        }
+
+        // ---------------- Factory Helpers ----------------
+
+        private static Scenario createScenario(
+                        String title,
+                        Cell[][] cells,
+                        Position goal,
+                        int maxSteps) {
+
+                return new Scenario(
+                                title,
+                                cells,
+                                START,
+                                goal,
+                                maxSteps,
+                                STEP_PENALTY);
+        }
 }

@@ -32,4 +32,16 @@ class MainTest {
     void runsUnreachableGoalScenario() {
         assertDoesNotThrow(() -> Main.main(new String[] { "4" }));
     }
+
+    @Test
+    @DisplayName("Open grid scenario runs successfully")
+    void runsOpenGridScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "5" }));
+    }
+
+    @Test
+    @DisplayName("Narrow passage scenario runs successfully")
+    void runsNarrowPassageScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "6" }));
+    }
 }
