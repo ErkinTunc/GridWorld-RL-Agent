@@ -175,14 +175,14 @@ public final class ConsolePrinter {
     // ---------------- Comparison Display ----------------
 
     public static void printComparison(
-            Map<String, SearchResult> results) {
+            Map<String, SearchMetrics> results) {
 
         printHeader("SEARCH RESULTS COMPARISON");
 
         printComparisonHeader();
         printSeparator();
 
-        results.forEach(ConsolePrinter::printComparisonRow);
+        results.forEach((name, metrics) -> printComparisonRow(name, metrics.result()));
 
         printSeparator();
     }

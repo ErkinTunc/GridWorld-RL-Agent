@@ -1,3 +1,4 @@
+
 package org.gridworld;
 
 import org.gridworld.cli.ConsolePrinter;
@@ -7,13 +8,9 @@ import org.gridworld.cli.SearchMetrics;
 import org.gridworld.scenario.Scenario;
 import org.gridworld.scenario.ScenarioFactory;
 
-import org.gridworld.domain.GridMap;
-import org.gridworld.environment.GridWorld;
-
 import org.gridworld.search.AStarSearch;
 import org.gridworld.search.BacktrackingSearch;
 import org.gridworld.search.SearchAlgorithm;
-import org.gridworld.search.SearchProblem;
 import org.gridworld.search.SearchResult;
 
 import java.util.LinkedHashMap;
@@ -96,23 +93,17 @@ public class Main {
 
     private static void runScenario(Scenario scenario) {
 
-        GridWorld world = createWorld(scenario);
-        SearchProblem problem = createProblem(world, scenario);
-
-        ScenarioRunner runner = new ScenarioRunner(world, problem);
-
-        Map<String, SearchResult> results = new LinkedHashMap<>();
+        ScenarioRunner runner = new ScenarioRunner(createAlgorithms());
 
         printInitialScenario(scenario);
 
-        for (SearchAlgorithm algorithm : createAlgorithms()) {
+        Map<String, SearchMetrics> results = runner.runScenario(scenario);
 
-            String name = algorithm.getClass().getSimpleName();
+        for (var entry : results.entrySet()) {
 
-            SearchMetrics metrics = runner.runAlgorithm(algorithm);
+            String name = entry.getKey();
+            SearchMetrics metrics = entry.getValue();
             SearchResult result = metrics.result();
-
-            results.put(name, result);
 
             ConsolePrinter.printResult(name, metrics);
 
@@ -131,29 +122,14 @@ public class Main {
 
     // ---------------- Initialization Helpers ----------------
 
-    private static GridWorld createWorld(Scenario scenario) {
+    private static Map<String, SearchAlgorithm> createAlgorithms() {
 
-        return new GridWorld(
-                new GridMap(scenario.cells()),
-                scenario.start(),
-                scenario.stepPenalty());
-    }
+        Map<String, SearchAlgorithm> algorithms = new LinkedHashMap<>();
 
-    private static SearchProblem createProblem(
-            GridWorld world, Scenario scenario) {
+        algorithms.put("BacktrackingSearch", new BacktrackingSearch());
+        algorithms.put("AStarSearch", new AStarSearch());
 
-        return new SearchProblem(
-                world,
-                scenario.start(),
-                scenario.goal(),
-                scenario.maxSteps());
-    }
-
-    private static List<SearchAlgorithm> createAlgorithms() {
-
-        return List.of(
-                new BacktrackingSearch(),
-                new AStarSearch());
+        return algorithms;
     }
 
     // ---------------- Scenario Display ----------------

@@ -1,41 +1,57 @@
-
 package org.gridworld.cli;
 
+import org.gridworld.domain.GridMap;
 import org.gridworld.environment.Direction;
 import org.gridworld.environment.GridWorld;
+import org.gridworld.scenario.Scenario;
 import org.gridworld.search.SearchAlgorithm;
 import org.gridworld.search.SearchProblem;
 import org.gridworld.search.SearchResult;
 
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public final class ScenarioRunner {
 
-    private final GridWorld world;
-    private final SearchProblem problem;
+    private final Map<String, SearchAlgorithm> algorithms;
 
     // ---------------- Constructor ----------------
 
-    public ScenarioRunner(
-            GridWorld world,
-            SearchProblem problem) {
+    public ScenarioRunner(Map<String, SearchAlgorithm> algorithms) {
 
-        this.world = Objects.requireNonNull(
-                world, "World cannot be null");
-
-        this.problem = Objects.requireNonNull(
-                problem, "Search problem cannot be null");
+        this.algorithms = new LinkedHashMap<>(
+                Objects.requireNonNull(algorithms,
+                        "Algorithms cannot be null"));
     }
 
     // ---------------- Public Methods ----------------
 
-    public SearchMetrics runAlgorithm(SearchAlgorithm algorithm) {
+    public Map<String, SearchMetrics> runScenario(Scenario scenario) {
 
-        Objects.requireNonNull(
-                algorithm, "Search algorithm cannot be null");
+        Objects.requireNonNull(scenario, "Scenario cannot be null");
 
-        world.reset();
+        Map<String, SearchMetrics> results = new LinkedHashMap<>();
+
+        for (var entry : algorithms.entrySet()) {
+
+            SearchMetrics metrics = runAlgorithm(
+                    scenario, entry.getValue());
+
+            results.put(entry.getKey(), metrics);
+        }
+
+        return results;
+    }
+
+    // ---------------- Algorithm Execution ----------------
+
+    private SearchMetrics runAlgorithm(
+            Scenario scenario,
+            SearchAlgorithm algorithm) {
+
+        GridWorld world = createWorld(scenario);
+        SearchProblem problem = createProblem(world, scenario);
 
         long startTime = System.nanoTime();
 
@@ -44,7 +60,7 @@ public final class ScenarioRunner {
         long executionTime = System.nanoTime() - startTime;
 
         if (result.pathFound()) {
-            executeActions(result.actions());
+            executeActions(world, result);
         }
 
         return new SearchMetrics(
@@ -53,11 +69,32 @@ public final class ScenarioRunner {
                 world.position());
     }
 
-    // ---------------- Helper Methods ----------------
+    // ---------------- Initialization Helpers ----------------
 
-    private void executeActions(List<Direction> actions) {
+    private GridWorld createWorld(Scenario scenario) {
 
-        for (Direction action : actions) {
+        return new GridWorld(
+                new GridMap(scenario.cells()),
+                scenario.start(),
+                scenario.stepPenalty());
+    }
+
+    private SearchProblem createProblem(
+            GridWorld world, Scenario scenario) {
+
+        return new SearchProblem(
+                world,
+                scenario.start(),
+                scenario.goal(),
+                scenario.maxSteps());
+    }
+
+    // ---------------- Execution Helpers ----------------
+
+    private void executeActions(
+            GridWorld world, SearchResult result) {
+
+        for (Direction action : result.actions()) {
             world.step(action);
         }
     }
