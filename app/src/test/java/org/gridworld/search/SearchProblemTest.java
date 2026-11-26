@@ -1,5 +1,7 @@
 package org.gridworld.search;
 
+import java.util.Set;
+
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
@@ -7,6 +9,7 @@ import org.gridworld.domain.Position;
 import org.gridworld.environment.GridWorld;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,5 +48,15 @@ class SearchProblemTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new SearchProblem(worldWithWall, START, GOAL, 1));
+    }
+
+    @Test
+    void initialStateStartsAtStartWithNoStepsOrReward() {
+        SearchState state = new SearchProblem(WORLD, START, GOAL, 1).initialState();
+
+        assertEquals(START, state.position());
+        assertEquals(0, state.stepsUsed());
+        assertEquals(0, state.totalReward());
+        assertEquals(Set.of(START), state.visitedPositions());
     }
 }

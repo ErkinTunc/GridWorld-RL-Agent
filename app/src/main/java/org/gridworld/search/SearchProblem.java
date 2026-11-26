@@ -1,6 +1,7 @@
 package org.gridworld.search;
 
 import java.util.Objects;
+import java.util.Set;
 
 import org.gridworld.domain.Position;
 import org.gridworld.environment.GridWorld;
@@ -25,5 +26,9 @@ public class SearchProblem {
         }
 
         this.maxSteps = maxSteps;
+    }
+
+    public SearchState initialState() {
+        return new SearchState(start, 0, 0, Set.of(start));
     }
 }
