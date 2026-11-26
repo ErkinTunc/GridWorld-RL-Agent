@@ -172,8 +172,8 @@ public final class AStarSearch implements SearchAlgorithm {
 
         return new SearchResult(
                 true,
-                List.copyOf(path),
-                List.copyOf(actions),
+                path,
+                actions,
                 totalCost,
                 totalReward,
                 expandedNodes);

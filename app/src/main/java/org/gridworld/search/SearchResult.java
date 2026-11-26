@@ -1,9 +1,9 @@
 package org.gridworld.search;
 
-import java.util.List;
-
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
+
+import java.util.List;
 
 public record SearchResult(
         boolean pathFound,
@@ -13,4 +13,10 @@ public record SearchResult(
         int totalReward,
         int expandedNodes) {
 
+    // ------------------- Constructor -------------------
+
+    public SearchResult {
+        path = List.copyOf(path);
+        actions = List.copyOf(actions);
+    }
 }
