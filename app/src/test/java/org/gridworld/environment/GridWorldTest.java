@@ -61,7 +61,7 @@ class GridWorldTest {
         StepResult result = world.step(Direction.RIGHT);
 
         assertPosition(new Position(0, 1), result);
-        assertFalse(result.done());
+        assertFalse(result.isTerminal());
     }
 
     @Test
@@ -178,7 +178,7 @@ class GridWorldTest {
         StepResult result = world.step(Direction.RIGHT);
 
         assertPosition(new Position(0, 2), result);
-        assertTrue(result.done());
+        assertTrue(result.isTerminal());
     }
 
     @Test
@@ -189,7 +189,7 @@ class GridWorldTest {
         StepResult result = world.step(Direction.RIGHT);
 
         assertPosition(new Position(1, 2), result);
-        assertTrue(result.done());
+        assertTrue(result.isTerminal());
     }
 
     @Test
@@ -201,7 +201,7 @@ class GridWorldTest {
 
         assertPosition(new Position(0, 2), result);
         assertEquals(0, result.reward());
-        assertTrue(result.done());
+        assertTrue(result.isTerminal());
     }
 
     // ---------------- Constructor Validation Tests ----------------
@@ -318,7 +318,7 @@ class GridWorldTest {
         StepResult result = world.step(Direction.UP);
 
         assertPosition(new Position(0, 1), result);
-        assertFalse(result.done());
+        assertFalse(result.isTerminal());
     }
 
     // ---------------- Reset Tests ----------------
@@ -346,7 +346,7 @@ class GridWorldTest {
 
         assertPosition(new Position(0, 1), result);
         assertEquals(-1, result.reward());
-        assertFalse(result.done());
+        assertFalse(result.isTerminal());
     }
 
     @Test
@@ -468,6 +468,6 @@ class GridWorldTest {
 
         assertPosition(previousPosition, result);
         assertEquals(-1, result.reward());
-        assertFalse(result.done());
+        assertFalse(result.isTerminal());
     }
 }

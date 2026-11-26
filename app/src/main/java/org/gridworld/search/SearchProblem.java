@@ -87,7 +87,7 @@ public final class SearchProblem {
 
     private boolean isValidSuccessor(SearchState state, StepResult result) {
         return !result.position().equals(state.position())
-                && (!result.done() || result.position().equals(goal));
+                && (!result.isTerminal() || result.position().equals(goal));
     }
 
     private static SearchState createNextState(SearchState state, StepResult result) {

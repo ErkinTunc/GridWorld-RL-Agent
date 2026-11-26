@@ -13,7 +13,7 @@ public final class GridWorld {
     private final int stepPenalty;
 
     private Position currentPosition;
-    private boolean done;
+    private boolean isTerminal;
 
     // ---------------- Constructor ----------------
 
@@ -41,20 +41,20 @@ public final class GridWorld {
 
     public void reset() {
         currentPosition = initialPosition;
-        done = false;
+        isTerminal = false;
     }
 
     public StepResult step(Direction direction) {
         Objects.requireNonNull(direction, "Direction cannot be null");
 
-        if (done) {
+        if (isTerminal) {
             return new StepResult(currentPosition, 0, true);
         }
 
         StepResult result = calculateTransition(currentPosition, direction);
 
         currentPosition = result.position();
-        done = result.done();
+        isTerminal = result.isTerminal();
 
         return result;
     }
