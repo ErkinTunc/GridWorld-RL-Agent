@@ -31,4 +31,9 @@ public class SearchProblem {
     public SearchState initialState() {
         return new SearchState(start, 0, 0, Set.of(start));
     }
+
+    public boolean isGoal(SearchState state) {
+        Objects.requireNonNull(state, "Search state cannot be null");
+        return goal.equals(state.position());
+    }
 }

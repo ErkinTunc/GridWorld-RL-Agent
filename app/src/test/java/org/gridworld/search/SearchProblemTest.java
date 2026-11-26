@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SearchProblemTest {
 
@@ -58,5 +60,16 @@ class SearchProblemTest {
         assertEquals(0, state.stepsUsed());
         assertEquals(0, state.totalReward());
         assertEquals(Set.of(START), state.visitedPositions());
+    }
+
+    @Test
+    void identifiesGoalStateByPosition() {
+        SearchProblem problem = new SearchProblem(WORLD, START, GOAL, 1);
+        SearchState goalState = new SearchState(GOAL, 1, 10, Set.of(START, GOAL));
+        SearchState otherState = problem.initialState();
+
+        assertTrue(problem.isGoal(goalState));
+        assertFalse(problem.isGoal(otherState));
+        assertThrows(NullPointerException.class, () -> problem.isGoal(null));
     }
 }
