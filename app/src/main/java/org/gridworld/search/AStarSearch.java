@@ -1,5 +1,8 @@
 package org.gridworld.search;
 
+import org.gridworld.domain.Position;
+import org.gridworld.environment.Direction;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,217 +12,194 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
-import org.gridworld.domain.GridMap;
-import org.gridworld.domain.Position;
-import org.gridworld.environment.Direction;
-
 public final class AStarSearch implements SearchAlgorithm {
-
-    private final GridMap gridMap;
-
-    // ------------- Constructor ------------
-
-    public AStarSearch(GridMap gridMap) {
-        this.gridMap = Objects.requireNonNull(gridMap, "Grid map cannot be null");
-    }
 
     // ---------------- Public Methods ----------------
 
     /**
-     * Searches for a path from the start position to the end position
-     * using the A* algorithm.
+     * Finds an optimal path by maximizing total reward
+     * within the step limit.
      *
-     * @param start The starting position.
-     * @param end   The ending position.
+     * @param problem The search problem to solve.
      * @return The result of the path search.
-     * @throws IllegalArgumentException if the positions are not walkable.
-     * @throws NullPointerException     if the positions are null.
+     * @throws NullPointerException if the problem is null.
      */
     @Override
-    public SearchResult search(Position start, Position end) {
-        validatePositions(start, end);
+    public SearchResult search(SearchProblem problem) {
+        Objects.requireNonNull(problem, "Problem cannot be null");
 
-        Map<Position, Integer> costFromStart = new HashMap<>();
-        Map<Position, Predecessor> predecessors = new HashMap<>();
+        SearchState initial = problem.initialState();
 
-        PriorityQueue<SearchNode> frontier = createFrontier();
+        Map<StateKey, Long> bestCosts = new HashMap<>();
+        bestCosts.put(keyOf(initial), 0L);
 
-        costFromStart.put(start, 0);
-        frontier.add(new SearchNode(start, 0, manhattanDistance(start, end)));
+        PriorityQueue<SearchNode> frontier = createFrontier(initial, problem.goal());
+
+        return findPath(problem, bestCosts, frontier);
+    }
+
+    // ---------------- Initialization Methods ----------------
+
+    private static PriorityQueue<SearchNode> createFrontier(
+            SearchState initial, Position goal) {
+
+        PriorityQueue<SearchNode> frontier = new PriorityQueue<>(
+                Comparator.comparingLong(SearchNode::estimatedTotalCost)
+                        .thenComparingLong(SearchNode::costFromStart));
+
+        frontier.add(new SearchNode(
+                initial,
+                0L,
+                manhattanDistance(initial.position(), goal),
+                null,
+                null));
+
+        return frontier;
+    }
+
+    // ---------------- Search Methods ----------------
+
+    private static SearchResult findPath(
+            SearchProblem problem,
+            Map<StateKey, Long> bestCosts,
+            PriorityQueue<SearchNode> frontier) {
 
         int expandedNodes = 0;
 
         while (!frontier.isEmpty()) {
             SearchNode current = frontier.remove();
 
-            if (isOutdated(current, costFromStart)) {
+            if (isOutdated(current, bestCosts)) {
                 continue;
             }
 
-            if (current.position().equals(end)) {
-                return buildResult(
-                        start,
-                        end,
-                        predecessors,
-                        current.costFromStart(),
-                        expandedNodes);
+            if (problem.isGoal(current.state())) {
+                return buildSuccessResult(current, expandedNodes);
             }
 
             expandedNodes++;
-
-            expandNeighbors(current, end, costFromStart, predecessors, frontier);
+            expandNeighbors(current, problem, bestCosts, frontier);
         }
 
-        return new SearchResult(false, List.of(), List.of(), 0, 0, expandedNodes);
+        return buildFailureResult(expandedNodes);
+    }
+
+    private static void expandNeighbors(
+            SearchNode current,
+            SearchProblem problem,
+            Map<StateKey, Long> bestCosts,
+            PriorityQueue<SearchNode> frontier) {
+
+        for (Transition transition : problem.successors(current.state())) {
+            long tentativeCost = current.costFromStart() + transition.cost();
+            StateKey key = keyOf(transition.state());
+
+            if (tentativeCost >= bestCosts.getOrDefault(key, Long.MAX_VALUE)) {
+                continue;
+            }
+
+            bestCosts.put(key, tentativeCost);
+
+            frontier.add(createSuccessorNode(
+                    current, transition, tentativeCost, problem.goal()));
+        }
+    }
+
+    private static SearchNode createSuccessorNode(
+            SearchNode parent,
+            Transition transition,
+            long costFromStart,
+            Position goal) {
+
+        SearchState state = transition.state();
+
+        long heuristic = manhattanDistance(state.position(), goal);
+
+        return new SearchNode(
+                state,
+                costFromStart,
+                costFromStart + heuristic,
+                parent,
+                transition.action());
     }
 
     // ---------------- Search Helper Methods ----------------
 
-    private static PriorityQueue<SearchNode> createFrontier() {
-
-        Comparator<SearchNode> comparator = Comparator
-                .comparingInt(SearchNode::estimatedTotalCost)
-                .thenComparingInt(SearchNode::costFromStart)
-                .thenComparingInt(node -> node.position().row())
-                .thenComparingInt(node -> node.position().col());
-
-        return new PriorityQueue<>(comparator);
-    }
-
-    private void expandNeighbors(
-            SearchNode current,
-            Position end,
-            Map<Position, Integer> costFromStart,
-            Map<Position, Predecessor> predecessors,
-            PriorityQueue<SearchNode> frontier) {
-
-        int tentativeCost = current.costFromStart() + 1;
-
-        for (Direction direction : Direction.values()) {
-            Position neighbor = direction.moveFrom(current.position());
-
-            if (!canVisit(neighbor, end)) {
-                continue;
-            }
-
-            Integer previousCost = costFromStart.get(neighbor);
-
-            if (previousCost != null && tentativeCost >= previousCost) {
-                continue;
-            }
-
-            costFromStart.put(neighbor, tentativeCost);
-            predecessors.put(
-                    neighbor,
-                    new Predecessor(current.position(), direction));
-
-            frontier.add(new SearchNode(
-                    neighbor,
-                    tentativeCost,
-                    tentativeCost + manhattanDistance(neighbor, end)));
-        }
-    }
-
     private static boolean isOutdated(
             SearchNode node,
-            Map<Position, Integer> costFromStart) {
+            Map<StateKey, Long> bestCosts) {
 
-        int currentCost = node.costFromStart();
-        int bestKnownCost = costFromStart.get(node.position());
-
-        return currentCost != bestKnownCost;
+        return node.costFromStart() != bestCosts.get(keyOf(node.state()));
     }
 
-    private boolean canVisit(Position neighbor, Position end) {
-        if (!gridMap.isWalkable(neighbor)) {
-            return false;
-        }
-
-        return neighbor.equals(end)
-                || !gridMap.cellAt(neighbor).isTerminal();
+    private static StateKey keyOf(SearchState state) {
+        return new StateKey(
+                state.position(), state.stepsUsed());
     }
 
-    // ---------------- Path Reconstruction Methods ----------------
+    // ---------------- Result Construction ----------------
 
-    private SearchResult buildResult(
-            Position start,
-            Position end,
-            Map<Position, Predecessor> predecessors,
-            int totalCost,
-            int expandedNodes) {
+    private static SearchResult buildSuccessResult(
+            SearchNode goal, int expandedNodes) {
 
         List<Position> path = new ArrayList<>();
         List<Direction> actions = new ArrayList<>();
 
-        Position current = end;
-        path.add(current);
+        SearchNode current = goal;
 
-        while (!current.equals(start)) {
-            Predecessor predecessor = predecessors.get(current);
+        while (current != null) {
+            path.add(current.state().position());
 
-            actions.add(predecessor.direction());
+            if (current.action() != null) {
+                actions.add(current.action());
+            }
 
-            current = predecessor.position();
-            path.add(current);
+            current = current.parent();
         }
 
         Collections.reverse(path);
         Collections.reverse(actions);
 
-        int totalReward = calculateTotalReward(path);
-
         return new SearchResult(
                 true,
                 path,
                 actions,
-                totalCost,
-                totalReward,
+                goal.costFromStart(),
+                goal.state().totalReward(),
                 expandedNodes);
     }
 
-    // ---------------- Calculation Methods ----------------
-
-    private int calculateTotalReward(List<Position> path) {
-        int totalReward = 0;
-
-        for (int i = 1; i < path.size(); i++) {
-            totalReward = Math.addExact(
-                    totalReward,
-                    gridMap.cellAt(path.get(i)).reward());
-        }
-
-        return totalReward;
+    private static SearchResult buildFailureResult(int expandedNodes) {
+        return new SearchResult(
+                false,
+                List.of(),
+                List.of(),
+                0L,
+                0L,
+                expandedNodes);
     }
 
-    private static int manhattanDistance(Position position, Position end) {
-        int rowDistance = Math.abs(position.row() - end.row());
-        int colDistance = Math.abs(position.col() - end.col());
+    // ---------------- Heuristic ----------------
 
-        return rowDistance + colDistance;
+    private static long manhattanDistance(
+            Position position, Position goal) {
+
+        return Math.abs((long) position.row() - goal.row())
+                + Math.abs((long) position.col() - goal.col());
     }
 
-    // ---------------- Validation Methods ----------------
+    // ---------------- Private Records ----------------
 
-    private void validatePositions(Position start, Position end) {
-        Objects.requireNonNull(start, "Start position cannot be null");
-        Objects.requireNonNull(end, "End position cannot be null");
-
-        if (!gridMap.isWalkable(start) || !gridMap.isWalkable(end)) {
-            throw new IllegalArgumentException(
-                    "Start and end positions must be walkable");
-        }
+    private record StateKey(
+            Position position,
+            int stepsUsed) {
     }
 
-    // ------------- Private Classes -----------
-    /**
-     * Represents a node in the search space for the A* algorithm.
-     * Each node contains a position, the cost from the start position to this node,
-     * and the estimated total cost from the start position to the end position
-     * through this node.
-     */
-    private record SearchNode(Position position, int costFromStart, int estimatedTotalCost) {
-    }
-
-    private record Predecessor(Position position, Direction direction) {
+    private record SearchNode(
+            SearchState state,
+            long costFromStart,
+            long estimatedTotalCost,
+            SearchNode parent,
+            Direction action) {
     }
 }
