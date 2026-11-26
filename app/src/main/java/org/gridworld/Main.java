@@ -1,12 +1,15 @@
 package org.gridworld;
 
 import org.gridworld.cli.ConsolePrinter;
-import org.gridworld.cli.Scenario;
-import org.gridworld.cli.ScenarioFactory;
 import org.gridworld.cli.ScenarioRunner;
 import org.gridworld.cli.SearchMetrics;
+
+import org.gridworld.scenario.Scenario;
+import org.gridworld.scenario.ScenarioFactory;
+
 import org.gridworld.domain.GridMap;
 import org.gridworld.environment.GridWorld;
+
 import org.gridworld.search.AStarSearch;
 import org.gridworld.search.BacktrackingSearch;
 import org.gridworld.search.SearchAlgorithm;

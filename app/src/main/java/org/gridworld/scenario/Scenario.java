@@ -1,5 +1,5 @@
 
-package org.gridworld.cli;
+package org.gridworld.scenario;
 
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.Position;
