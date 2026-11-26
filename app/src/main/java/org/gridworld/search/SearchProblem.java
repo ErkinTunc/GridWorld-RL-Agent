@@ -1,10 +1,8 @@
 package org.gridworld.search;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;

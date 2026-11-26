@@ -1,7 +1,6 @@
 package org.gridworld.search;
 
 import java.util.List;
-import java.util.Set;
 
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.CellType;
@@ -87,6 +86,17 @@ class SearchProblemTest {
                                 goal, MAX_STEPS + 1, 8L);
 
                 assertFalse(problem.isGoal(state));
+        }
+
+        @Test
+        void acceptsStartEqualsGoal() {
+                SearchProblem samePositionProblem = new SearchProblem(world, start, start, 0);
+
+                SearchState initial = samePositionProblem.initialState();
+
+                assertTrue(samePositionProblem.isGoal(initial));
+                assertTrue(samePositionProblem.successors(initial).isEmpty());
+                assertEquals(0L, initial.totalReward());
         }
 
         // ----------------- Successor Tests -----------------
@@ -186,6 +196,29 @@ class SearchProblemTest {
                 assertEquals(36L, shortCost);
                 assertEquals(35L, longCost);
                 assertTrue(longCost < shortCost);
+        }
+
+        @Test
+        void supportsCostBeyondIntegerRange() {
+                Cell empty = new Cell(CellType.EMPTY, 0);
+                Cell negative = new Cell(CellType.EMPTY, Integer.MIN_VALUE);
+                Cell terminal = new Cell(CellType.TERMINAL, Integer.MAX_VALUE);
+
+                GridMap map = new GridMap(new Cell[][] {
+                                { empty, negative, terminal }
+                });
+
+                GridWorld largeRewardWorld = new GridWorld(map, start, 0);
+
+                SearchProblem largeRewardProblem = new SearchProblem(largeRewardWorld, start, goal, 2);
+
+                Transition transition = largeRewardProblem
+                                .successors(largeRewardProblem.initialState())
+                                .getFirst();
+
+                assertEquals(Integer.MAX_VALUE, map.rewardUpperBound());
+                assertEquals(Integer.MIN_VALUE, transition.reward());
+                assertEquals(4294967296L, transition.cost());
         }
 
         // -------------- Visited Positions Tests ------------

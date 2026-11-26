@@ -4,8 +4,6 @@ import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
