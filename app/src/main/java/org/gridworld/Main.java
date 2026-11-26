@@ -4,6 +4,7 @@ import org.gridworld.cli.ConsolePrinter;
 import org.gridworld.cli.Scenario;
 import org.gridworld.cli.ScenarioFactory;
 import org.gridworld.cli.ScenarioRunner;
+import org.gridworld.cli.SearchMetrics;
 import org.gridworld.domain.GridMap;
 import org.gridworld.environment.GridWorld;
 import org.gridworld.search.AStarSearch;
@@ -105,12 +106,13 @@ public class Main {
 
             String name = algorithm.getClass().getSimpleName();
 
-            SearchResult result = runner.runAlgorithm(algorithm);
+            SearchMetrics metrics = runner.runAlgorithm(algorithm);
+            SearchResult result = metrics.result();
 
             results.put(name, result);
 
             ConsolePrinter.printResult(
-                    name, result, world.position());
+                    name, metrics, world.position());
 
             if (result.pathFound()) {
 

@@ -126,13 +126,16 @@ public final class ConsolePrinter {
 
     public static void printResult(
             String algorithm,
-            SearchResult result,
+            SearchMetrics metrics,
             Position finalPosition) {
+
+        SearchResult result = metrics.result();
 
         printHeader(algorithm);
 
         if (!result.pathFound()) {
             System.out.println(colorize("No path found.", RED));
+            printPerformance(metrics);
             return;
         }
 
@@ -148,7 +151,24 @@ public final class ConsolePrinter {
         printRow("Steps", result.actions().size(), RESET);
         printRow("Final position", formatPosition(finalPosition), GREEN);
 
+        printPerformance(metrics);
+
         printSeparator();
+    }
+
+    // ---------------- Result Display Helpers  ----------------
+
+    private static void printPerformance(SearchMetrics metrics) {
+
+        printRow(
+                "Expanded nodes",
+                metrics.result().expandedNodes(),
+                CYAN);
+
+        printRow(
+                "Execution time",
+                String.format("%.4f ms", metrics.executionTimeMillis()),
+                YELLOW);
     }
 
     // ---------------- Comparison Display ----------------

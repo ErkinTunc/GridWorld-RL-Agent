@@ -1,3 +1,4 @@
+
 package org.gridworld.cli;
 
 import org.gridworld.environment.Direction;
@@ -29,20 +30,24 @@ public final class ScenarioRunner {
 
     // ---------------- Public Methods ----------------
 
-    public SearchResult runAlgorithm(SearchAlgorithm algorithm) {
+    public SearchMetrics runAlgorithm(SearchAlgorithm algorithm) {
 
         Objects.requireNonNull(
                 algorithm, "Search algorithm cannot be null");
 
         world.reset();
 
+        long startTime = System.nanoTime();
+
         SearchResult result = algorithm.search(problem);
+
+        long executionTime = System.nanoTime() - startTime;
 
         if (result.pathFound()) {
             executeActions(result.actions());
         }
 
-        return result;
+        return new SearchMetrics(result, executionTime);
     }
 
     // ---------------- Helper Methods ----------------
