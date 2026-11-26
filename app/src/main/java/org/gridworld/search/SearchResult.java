@@ -9,8 +9,8 @@ public record SearchResult(
         boolean pathFound,
         List<Position> path,
         List<Direction> actions,
-        int totalCost,
-        int totalReward,
+        long totalCost,
+        long totalReward,
         int expandedNodes) {
 
     // ------------------- Constructor -------------------

@@ -24,13 +24,14 @@ class SearchResultTest {
 
     @Test
     void storesSearchResultValues() {
-        SearchResult result = new SearchResult(true, path, actions, 1, 10, 2);
+        SearchResult result = new SearchResult(
+                true, path, actions, 1L, 10L, 2);
 
         assertTrue(result.pathFound());
         assertEquals(path, result.path());
         assertEquals(actions, result.actions());
-        assertEquals(1, result.totalCost());
-        assertEquals(10, result.totalReward());
+        assertEquals(1L, result.totalCost());
+        assertEquals(10L, result.totalReward());
         assertEquals(2, result.expandedNodes());
     }
 
@@ -41,6 +42,19 @@ class SearchResultTest {
         assertFalse(result.pathFound());
         assertTrue(result.path().isEmpty());
         assertTrue(result.actions().isEmpty());
+    }
+
+    @Test
+    void supportsValuesBeyondIntegerRange() {
+        long totalCost = 5_000_000_000L;
+        long totalReward = 3_000_000_000L;
+
+        SearchResult result = new SearchResult(
+                true, path, actions,
+                totalCost, totalReward, 2);
+
+        assertEquals(totalCost, result.totalCost());
+        assertEquals(totalReward, result.totalReward());
     }
 
     // --------------- Encapsulation Tests ----------------
