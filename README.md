@@ -10,7 +10,7 @@ A Java implementation of a GridWorld agent using Backtracking and A* search to n
 
 The environment and search algorithms are implemented independently.
 
-![GridWorld UML](/docs/imgs/UML_GridWorld-v0.3.1.png)
+![GridWorld UML](/docs/imgs/UML_GridWorld-v0.3.0.2.png)
 
 _Planned architecture for v0.3.0._
 
