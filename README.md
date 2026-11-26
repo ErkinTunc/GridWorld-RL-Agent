@@ -1,18 +1,18 @@
 # GridWorld RL Agent
 
-A Java project for building an intelligent agent that navigates a grid, avoids obstacles, and makes reward-aware decisions.
+A Java implementation of a GridWorld agent using Backtracking and A* search to navigate a grid and maximize rewards within a step limit.
 
-**Status:** In development — building and testing the environment before implementing the agent algorithm.
+**Status:** v0.2.0 released — v0.3.0 in development.
 
-**Tech stack:** Java 21 · Gradle · JUnit Jupiter
+**Tech stack:** Java 21 · Gradle · JUnit 5 · GitHub Actions
 
 ## Architecture
 
-The grid environment is independent of the decision-making algorithm, keeping the code simple, testable, and extensible.
+The environment and search algorithms are implemented independently.
 
-![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.2.png)
+![GridWorld UML](/docs/imgs/UML_GridWorld-v0.3.1.png)
 
-_Planned class structure; not all classes are implemented yet._
+_Planned architecture for v0.3.0._
 
 ## Project structure
 
@@ -23,49 +23,59 @@ GridWorld-RL-Agent/
 │   └── src/
 │       ├── main/java/org/gridworld/
 │       │   ├── Main.java
-│       │   ├── domain/          # Position, CellType, Cell, GridMap
-│       │   ├── environment/     # GridWorld, StepResult, Direction
-│       │   └── search/          # Search algorithms and shared models
-│       │
+│       │   ├── domain/
+│       │   ├── environment/
+│       │   ├── search/
+│       │   ├── cli/
+│       │   ├── scenario/
+│       │   └── benchmark/
 │       └── test/java/org/gridworld/
-│           ├── MainTest.java
-│           ├── domain/          # Domain unit tests
-│           ├── environment/     # Environment unit tests
-│           └── search/          # Search algorithm unit tests (planned)
-├── docs/                        # Architecture notes and UML diagrams
+├── docs/
 ├── settings.gradle.kts
 └── gradlew / gradlew.bat
 ```
 
-_The search package and its tests are planned for v0.2.0._
-
-_Some files in this structure are planned for upcoming milestones._
-
 ## Build and test
 
-From the repository root:
+### Linux / macOS
 
 ```bash
-# macOS / Linux
-./gradlew :app:run
+# Start the interactive menu
+./gradlew --console=plain -q :app:run
+
+# Run tests
 ./gradlew :app:test
 ```
 
-Windows PowerShell:
+### Windows
 
 ```powershell
-.\gradlew.bat :app:run
+# Start the interactive menu
+.\gradlew.bat --console=plain -q :app:run
+
+# Run tests
 .\gradlew.bat :app:test
 ```
 
-## Next milestone
+## Roadmap
 
-**Status:** v0.1.0 completed - developing v0.2.0 with Backtracking and A\* search.
+### v0.1.0 — GridWorld Foundation
+
+- Grid, cells and environment.
+- Movement and reward rules.
+- Unit tests.
 
 ### v0.2.0 — Intelligent Agent
 
-- Introduce a non-mutating transition mechanism.
-- Define shared search models and contracts.
-- Implement Backtracking and A\* search.
-- Support bounded reward maximization.
-- Test algorithm correctness and compare performance.
+- Backtracking and A* search.
+- Bounded reward maximization.
+- Interactive CLI with four scenarios.
+- Execution time and expanded nodes.
+- 153 passing tests.
+
+### v0.3.0 — Evaluation & Optimization (in progress)
+
+- CLI and scenario refactoring.
+- Additional scenarios.
+- Search benchmarking with warm-up runs and median execution times.
+- Performance comparison and additional tests.
