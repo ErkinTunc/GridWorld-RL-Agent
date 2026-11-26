@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
-import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
@@ -97,8 +96,7 @@ public final class AStarSearch implements SearchAlgorithm {
         int tentativeCost = current.costFromStart() + 1;
 
         for (Direction direction : Direction.values()) {
-            Position neighbor = Direction.calculateNextPosition(
-                    current.position(), direction);
+            Position neighbor = direction.moveFrom(current.position());
 
             if (!canVisit(neighbor, end)) {
                 continue;
@@ -138,7 +136,7 @@ public final class AStarSearch implements SearchAlgorithm {
         }
 
         return neighbor.equals(end)
-                || gridMap.cellAt(neighbor).type() != CellType.TERMINAL;
+                || !gridMap.cellAt(neighbor).isTerminal();
     }
 
     // ---------------- Path Reconstruction Methods ----------------
@@ -172,8 +170,8 @@ public final class AStarSearch implements SearchAlgorithm {
 
         return new SearchResult(
                 true,
-                List.copyOf(path),
-                List.copyOf(actions),
+                path,
+                actions,
                 totalCost,
                 totalReward,
                 expandedNodes);

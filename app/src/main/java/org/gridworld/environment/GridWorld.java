@@ -2,7 +2,6 @@ package org.gridworld.environment;
 
 import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
-import org.gridworld.domain.CellType;
 import org.gridworld.domain.Cell;
 
 import java.util.Objects;
@@ -14,7 +13,7 @@ public final class GridWorld {
     private final int stepPenalty;
 
     private Position currentPosition;
-    private boolean done;
+    private boolean isTerminal;
 
     // ---------------- Constructor ----------------
 
@@ -42,20 +41,20 @@ public final class GridWorld {
 
     public void reset() {
         currentPosition = initialPosition;
-        done = false;
+        isTerminal = false;
     }
 
     public StepResult step(Direction direction) {
         Objects.requireNonNull(direction, "Direction cannot be null");
 
-        if (done) {
+        if (isTerminal) {
             return new StepResult(currentPosition, 0, true);
         }
 
         StepResult result = calculateTransition(currentPosition, direction);
 
         currentPosition = result.position();
-        done = result.done();
+        isTerminal = result.isTerminal();
 
         return result;
     }
@@ -67,7 +66,7 @@ public final class GridWorld {
             throw new IllegalArgumentException("Position must be walkable");
         }
 
-        if (map.cellAt(from).type() == CellType.TERMINAL) {
+        if (map.cellAt(from).isTerminal()) {
             return new StepResult(from, 0, true);
         }
 
@@ -77,7 +76,7 @@ public final class GridWorld {
     // ---------------- Helper Methods ----------------
 
     private StepResult calculateTransition(Position from, Direction direction) {
-        Position nextPosition = direction.calculateNextPosition(from,direction);
+        Position nextPosition = direction.moveFrom(from);
 
         if (!map.isWalkable(nextPosition)) {
             return new StepResult(from, stepPenalty, false);
@@ -86,9 +85,8 @@ public final class GridWorld {
         Cell cell = map.cellAt(nextPosition);
 
         int reward = Math.addExact(stepPenalty, cell.reward());
-        boolean terminal = cell.type() == CellType.TERMINAL;
 
-        return new StepResult(nextPosition, reward, terminal);
+        return new StepResult(nextPosition, reward, cell.isTerminal());
     }
 
     // ---------------- Validation Methods ----------------
@@ -98,7 +96,7 @@ public final class GridWorld {
             throw new IllegalArgumentException("Initial position must be walkable");
         }
 
-        if (map.cellAt(position).type() == CellType.TERMINAL) {
+        if (map.cellAt(position).isTerminal()) {
             throw new IllegalArgumentException("Initial position cannot be terminal");
         }
     }
@@ -107,5 +105,11 @@ public final class GridWorld {
         if (stepPenalty > 0) {
             throw new IllegalArgumentException("Step penalty must be non-positive");
         }
+    }
+
+    // ----------------- Getters ------------------
+
+    public GridMap getMap() {
+        return map;
     }
 }

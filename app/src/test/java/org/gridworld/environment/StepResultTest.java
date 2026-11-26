@@ -31,14 +31,14 @@ class StepResultTest {
     void storesStepResult() {
         assertEquals(position, normalResult.position());
         assertEquals(-1, normalResult.reward());
-        assertFalse(normalResult.done());
+        assertFalse(normalResult.isTerminal());
     }
 
     // ---------------- Terminal State Tests ----------------
 
     @Test
     void identifiesTerminalState() {
-        assertTrue(terminalResult.done());
+        assertTrue(terminalResult.isTerminal());
         assertTrue(terminalResult.isTerminal());
     }
 

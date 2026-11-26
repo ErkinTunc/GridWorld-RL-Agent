@@ -1,46 +1,66 @@
 package org.gridworld.search;
 
-import java.util.Set;
-
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TransitionTest {
 
-    private static final SearchState STATE = new SearchState(
+    private final SearchState state = new SearchState(
             new Position(0, 1),
             1,
-            4,
+            4L,
             Set.of(new Position(0, 0), new Position(0, 1)));
 
-    @Test
-    void storesTheTransitionValues() {
-        Transition transition = new Transition(STATE, Direction.RIGHT, 4, 1);
+    // ---------------------- Tests ----------------------
 
-        assertEquals(STATE, transition.state());
+    @Test
+    void storesTransitionValues() {
+        Transition transition = new Transition(state, Direction.RIGHT, -1, 12L);
+
+        assertEquals(state, transition.state());
         assertEquals(Direction.RIGHT, transition.action());
-        assertEquals(4, transition.reward());
-        assertEquals(1, transition.cost());
+        assertEquals(-1, transition.reward());
+        assertEquals(12L, transition.cost());
+    }
+
+    // ---------------- Validation Tests -----------------
+
+    @Test
+    void acceptsZeroCost() {
+        Transition transition = new Transition(state, Direction.RIGHT, 10, 0L);
+
+        assertEquals(0L, transition.cost());
+        assertEquals(10, transition.reward());
     }
 
     @Test
-    void rejectsNullStateOrAction() {
-        assertThrows(
-                NullPointerException.class,
-                () -> new Transition(null, Direction.RIGHT, 0, 1));
-        assertThrows(
-                NullPointerException.class,
-                () -> new Transition(STATE, null, 0, 1));
+    void acceptsZeroReward() {
+        Transition transition = new Transition(state, Direction.RIGHT, 0, 1L);
+
+        assertEquals(0, transition.reward());
+    }
+
+    @Test
+    void rejectsNullState() {
+        assertThrows(NullPointerException.class,
+                () -> new Transition(null, Direction.RIGHT, -1, 12L));
+    }
+
+    @Test
+    void rejectsNullAction() {
+        assertThrows(NullPointerException.class,
+                () -> new Transition(state, null, -1, 12L));
     }
 
     @Test
     void rejectsNegativeCost() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new Transition(STATE, Direction.RIGHT, 0, -1));
+        assertThrows(IllegalArgumentException.class,
+                () -> new Transition(state, Direction.RIGHT, -1, -1L));
     }
 }

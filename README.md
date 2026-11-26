@@ -10,11 +10,9 @@ A Java project for building an intelligent agent that navigates a grid, avoids o
 
 The grid environment is independent of the decision-making algorithm, keeping the code simple, testable, and extensible.
 
-![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.png)
+![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.1.png)
 
-*Planned class structure; not all classes are implemented yet.*
-
-## Project structure
+_Planned class structure; not all classes are implemented yet._
 
 ## Project structure
 
@@ -28,7 +26,7 @@ GridWorld-RL-Agent/
 │       │   ├── domain/          # Position, CellType, Cell, GridMap
 │       │   ├── environment/     # GridWorld, StepResult, Direction
 │       │   └── search/          # Search algorithms and shared models
-│       │       
+│       │
 │       └── test/java/org/gridworld/
 │           ├── MainTest.java
 │           ├── domain/          # Domain unit tests
@@ -39,9 +37,9 @@ GridWorld-RL-Agent/
 └── gradlew / gradlew.bat
 ```
 
-*The search package and its tests are planned for v0.2.0.*
+_The search package and its tests are planned for v0.2.0._
 
-*Some files in this structure are planned for upcoming milestones.*
+_Some files in this structure are planned for upcoming milestones._
 
 ## Build and test
 
@@ -62,12 +60,12 @@ Windows PowerShell:
 
 ## Next milestone
 
-**Status:** v0.1.0 completed - developing v0.2.0 with Backtracking and A* search.
+**Status:** v0.1.0 completed - developing v0.2.0 with Backtracking and A\* search.
 
 ### v0.2.0 — Intelligent Agent
 
 - Introduce a non-mutating transition mechanism.
 - Define shared search models and contracts.
-- Implement Backtracking and A* search.
+- Implement Backtracking and A\* search.
 - Support bounded reward maximization.
 - Test algorithm correctness and compare performance.

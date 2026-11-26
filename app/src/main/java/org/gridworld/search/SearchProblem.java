@@ -6,64 +6,131 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.gridworld.environment.GridWorld;
 import org.gridworld.environment.StepResult;
 
-public class SearchProblem {
+public final class SearchProblem {
 
     private final GridWorld world;
     private final Position start;
     private final Position goal;
     private final int maxSteps;
+    private final long rewardOffset;
 
-    public SearchProblem(GridWorld world, Position start, Position goal, int maxSteps) {
+    // ------------------- Constructor -------------------
+
+    public SearchProblem(
+            GridWorld world,
+            Position start,
+            Position goal,
+            int maxSteps) {
+
         this.world = Objects.requireNonNull(world, "World cannot be null");
-        this.start = Objects.requireNonNull(start, "Start position cannot be null");
-        this.goal = Objects.requireNonNull(goal, "Goal position cannot be null");
 
-        if (maxSteps < 0) {
-            throw new IllegalArgumentException("Maximum steps cannot be negative");
-        }
-        if (!world.isWalkable(start) || !world.isWalkable(goal)) {
-            throw new IllegalArgumentException("Start and goal positions must be walkable");
-        }
+        GridMap map = world.getMap();
 
+        validateParameters(map, start, goal, maxSteps);
+
+        this.start = start;
+        this.goal = goal;
         this.maxSteps = maxSteps;
+        this.rewardOffset = (long) map.rewardUpperBound() + 1;
     }
 
+    // ------------------ Public Methods -----------------
+
     public SearchState initialState() {
-        return new SearchState(start, 0, 0, Set.of(start));
+        return new SearchState(start, 0, 0L, Set.of(start));
+    }
+
+    public Position goal() {
+        return goal;
     }
 
     public boolean isGoal(SearchState state) {
-        Objects.requireNonNull(state, "Search state cannot be null");
-        return goal.equals(state.position());
+        return state.position().equals(goal)
+                && state.stepsUsed() <= maxSteps;
     }
 
     public List<Transition> successors(SearchState state) {
-        Objects.requireNonNull(state, "Search state cannot be null");
         if (isGoal(state) || state.stepsUsed() >= maxSteps) {
             return List.of();
         }
 
         List<Transition> transitions = new ArrayList<>();
+
         for (Direction direction : Direction.values()) {
             StepResult result = world.preview(state.position(), direction);
-            Position nextPosition = result.position();
 
-            if (nextPosition.equals(state.position())|| state.visitedPositions().contains(nextPosition)|| (result.done() && !nextPosition.equals(goal))) {
+            if (!isValidSuccessor(state, result)) {
                 continue;
             }
 
-            Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
-            visitedPositions.add(nextPosition);
+            SearchState nextState = createNextState(state, result);
 
-            SearchState nextState = new SearchState(nextPosition,state.stepsUsed() + 1,Math.addExact(state.totalReward(), result.reward()),visitedPositions);
-            transitions.add(new Transition(nextState, direction, result.reward(), 1));
+            long cost = calculateCost(nextState, result.reward());
+
+            transitions.add(new Transition(
+                    nextState,
+                    direction,
+                    result.reward(),
+                    cost));
         }
 
-        return List.copyOf(transitions);
+        return transitions;
+    }
+
+    // ------------------ Helper Methods -----------------
+
+    private boolean isValidSuccessor(SearchState state, StepResult result) {
+        return !result.position().equals(state.position())
+                && (!result.isTerminal() || result.position().equals(goal));
+    }
+
+    private static SearchState createNextState(SearchState state, StepResult result) {
+
+        Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
+
+        visitedPositions.add(result.position());
+
+        return new SearchState(
+                result.position(),
+                state.stepsUsed() + 1,
+                state.totalReward() + result.reward(),
+                visitedPositions);
+    }
+
+    private long calculateCost(SearchState state, int reward) {
+        long cost = rewardOffset - reward;
+
+        if (isGoal(state)) {
+            cost += (maxSteps - state.stepsUsed()) * rewardOffset;
+        }
+
+        return cost;
+    }
+
+    // ---------------- Validation Methods ---------------
+
+    private static void validateParameters(
+            GridMap map,
+            Position start,
+            Position goal,
+            int maxSteps) {
+
+        if (!map.isWalkable(start) || !map.isWalkable(goal)) {
+            throw new IllegalArgumentException("Start and goal must be walkable");
+        }
+
+        if (map.cellAt(start).isTerminal()) {
+            throw new IllegalArgumentException("Start cannot be terminal");
+        }
+
+        if (maxSteps < 0) {
+            throw new IllegalArgumentException("Max steps cannot be negative");
+        }
     }
 }

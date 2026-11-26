@@ -32,13 +32,7 @@ public final class GridMap {
      * @return true if the position is walkable, false otherwise.
      */
     public boolean isWalkable(Position pos) {
-        if (!isInside(pos)) {
-            return false;
-        }
-
-        Cell cell = getCellUnchecked(pos);
-
-        return cell.type() != CellType.WALL;
+        return isInside(pos) && getCellUnchecked(pos).isWalkable();
     }
 
     /**
@@ -51,6 +45,20 @@ public final class GridMap {
         validateBounds(pos);
 
         return getCellUnchecked(pos);
+    }
+
+    public int rewardUpperBound() {
+        int maxReward = 0;
+
+        for (Cell[] row : cells) {
+            for (Cell cell : row) {
+                if (cell.isWalkable()) {
+                    maxReward = Math.max(maxReward, cell.reward());
+                }
+            }
+        }
+
+        return maxReward;
     }
 
     // ------ Helper Methods -----
