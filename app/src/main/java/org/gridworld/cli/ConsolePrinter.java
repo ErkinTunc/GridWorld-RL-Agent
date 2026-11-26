@@ -3,6 +3,7 @@ package org.gridworld.cli;
 import org.gridworld.domain.Cell;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
+import org.gridworld.scenario.Scenario;
 import org.gridworld.search.SearchResult;
 
 import java.util.ArrayList;
@@ -55,15 +56,17 @@ public final class ConsolePrinter {
 
     // ---------------- Menu Display ----------------
 
-    public static void printMenu() {
+    public static void printMenu(List<Scenario> scenarios) {
+
         printHeader("GRIDWORLD - SEARCH DEMO");
 
-        System.out.println("1. Reward Maximization");
-        System.out.println("2. Alternative Optimal Paths");
-        System.out.println("3. Obstacle Avoidance");
-        System.out.println("4. Unreachable Goal");
-        System.out.println("5. Open Grid");
-        System.out.println("6. Narrow Passage");
+        for (int index = 0; index < scenarios.size(); index++) {
+            System.out.printf(
+                    "%d. %s%n",
+                    index + 1,
+                    scenarios.get(index).title());
+        }
+
         System.out.println("0. Exit");
 
         printSeparator();
