@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class SearchProblemTest {
@@ -50,6 +51,7 @@ class SearchProblemTest {
         // ---------------- Initial State Tests --------------
 
         @Test
+        @DisplayName ("Search problem creates initial state correctly")
         void createsInitialState() {
                 assertEquals(
                                 new SearchState(start, 0, 0L),
@@ -57,13 +59,16 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem returns correct goal position")
         void returnsGoal() {
                 assertEquals(goal, problem.goal());
         }
 
         // -------------------- Goal Tests -------------------
 
+
         @Test
+        @DisplayName ("Search problem identifies goal state correctly")
         void identifiesGoal() {
                 SearchState state = new SearchState(
                                 goal, 2, 8L);
@@ -73,6 +78,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem identifies goal state correctly")
         void acceptsGoalAtMaxSteps() {
                 SearchState state = new SearchState(
                                 goal, MAX_STEPS, 9L);
@@ -81,6 +87,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem rejects goal beyond max steps")
         void rejectsGoalBeyondMaxSteps() {
                 SearchState state = new SearchState(
                                 goal, MAX_STEPS + 1, 8L);
@@ -89,6 +96,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem accepts start equals goal")
         void acceptsStartEqualsGoal() {
                 SearchProblem samePositionProblem = new SearchProblem(world, start, start, 0);
 
@@ -102,6 +110,7 @@ class SearchProblemTest {
         // ----------------- Successor Tests -----------------
 
         @Test
+        @DisplayName ("Search problem generates only valid successors")
         void generatesOnlyValidSuccessors() {
                 List<Transition> transitions = problem.successors(problem.initialState());
 
@@ -116,6 +125,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem stops generating successors at max steps")
         void stopsAtMaxSteps() {
                 SearchState state = new SearchState(
                                 start, MAX_STEPS, -4L);
@@ -124,6 +134,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem stops generating successors at goal")
         void stopsAtGoal() {
                 SearchState state = new SearchState(
                                 goal, 2, 8L);
@@ -132,6 +143,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem excludes other terminal cells")
         void excludesOtherTerminalCells() {
                 SearchState state = new SearchState(
                                 bonusPosition, 2, 1L);
@@ -143,6 +155,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem excludes wall cells")
         void doesNotChangeWorldState() {
                 problem.successors(problem.initialState());
 
@@ -150,6 +163,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem accepts zero max steps")
         void acceptsZeroMaxSteps() {
                 SearchProblem zeroStepProblem = new SearchProblem(world, start, goal, 0);
 
@@ -160,6 +174,7 @@ class SearchProblemTest {
         // --------------- Reward and Cost Tests -------------
 
         @Test
+        @DisplayName ("Search problem accumulates rewards correctly")
         void accumulatesRewards() {
                 Transition first = findTransition(
                                 problem.initialState(), Direction.RIGHT);
@@ -172,6 +187,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("higher reward path has lower cost than shorter path")
         void higherRewardPathHasLowerCost() {
                 Transition first = findTransition(
                                 problem.initialState(), Direction.RIGHT);
@@ -199,6 +215,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem supports cost beyond integer range")
         void supportsCostBeyondIntegerRange() {
                 Cell empty = new Cell(CellType.EMPTY, 0);
                 Cell negative = new Cell(CellType.EMPTY, Integer.MIN_VALUE);
@@ -224,6 +241,7 @@ class SearchProblemTest {
         // -------------- Visited Positions Tests ------------
 
         @Test
+        @DisplayName ("Search problem creates successor without changing parent state")
         void createsSuccessorWithoutChangingParent() {
                 SearchState initial = problem.initialState();
 
@@ -235,6 +253,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem allows revisiting positions")
         void allowsRevisitsAndCollectsRewardAgain() {
                 Transition right = findTransition(
                                 problem.initialState(), Direction.RIGHT);
@@ -257,18 +276,21 @@ class SearchProblemTest {
         // ---------------- Validation Tests -----------------
 
         @Test
+        @DisplayName ("Search problem rejects null world")
         void rejectsNullWorld() {
                 assertThrows(NullPointerException.class,
                                 () -> new SearchProblem(null, start, goal, MAX_STEPS));
         }
 
         @Test
+        @DisplayName ("Search problem rejects null start position")
         void rejectsNullGoalState() {
                 assertThrows(NullPointerException.class,
                                 () -> problem.isGoal(null));
         }
 
         @Test
+        @DisplayName ("Search problem rejects null state for successors")
         void rejectsNonWalkableStart() {
                 assertThrows(IllegalArgumentException.class,
                                 () -> new SearchProblem(
@@ -276,6 +298,7 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem rejects non-walkable goal position")
         void rejectsNonWalkableGoal() {
                 assertThrows(IllegalArgumentException.class,
                                 () -> new SearchProblem(
@@ -283,12 +306,14 @@ class SearchProblemTest {
         }
 
         @Test
+        @DisplayName ("Search problem rejects terminal start position")
         void rejectsTerminalStart() {
                 assertThrows(IllegalArgumentException.class,
                                 () -> new SearchProblem(world, goal, goal, MAX_STEPS));
         }
 
         @Test
+        @DisplayName ("Search problem rejects negative max steps")
         void rejectsNegativeMaxSteps() {
                 assertThrows(IllegalArgumentException.class,
                                 () -> new SearchProblem(world, start, goal, -1));

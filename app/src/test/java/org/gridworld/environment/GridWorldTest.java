@@ -6,6 +6,7 @@ import org.gridworld.domain.GridMap;
 import org.gridworld.domain.Position;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -43,11 +44,13 @@ class GridWorldTest {
     // ---------------- Initial State Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld starts at initial position")
     void startsAtInitialPosition() {
         assertEquals(start, world.position());
     }
 
     @Test
+    @DisplayName ("GridWorld starts with correct initial reward")
     void reportsWhetherPositionIsWalkable() {
         assertTrue(world.isWalkable(start));
         assertFalse(world.isWalkable(new Position(1, 0)));
@@ -57,6 +60,7 @@ class GridWorldTest {
     // ---------------- Movement Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld moves position correctly")
     void movesRight() {
         StepResult result = world.step(Direction.RIGHT);
 
@@ -65,6 +69,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld moves position correctly")
     void movesDown() {
         world.step(Direction.RIGHT);
 
@@ -74,6 +79,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld moves position correctly")
     void movesLeft() {
         world.step(Direction.RIGHT);
 
@@ -83,6 +89,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld moves position correctly")
     void movesUp() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -95,16 +102,19 @@ class GridWorldTest {
     // ---------------- Invalid Movement Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld does not move outside grid or into wall")
     void cannotMoveOutsideUpperBoundary() {
         assertBlockedMovement(Direction.UP);
     }
 
     @Test
+    @DisplayName ("GridWorld does not move outside grid or into wall")
     void cannotMoveOutsideLeftBoundary() {
         assertBlockedMovement(Direction.LEFT);
     }
 
     @Test
+    @DisplayName ("GridWorld does not move outside grid or into wall")
     void cannotMoveOutsideLowerBoundary() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -116,6 +126,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld does not move outside grid or into wall")
     void cannotMoveOutsideRightBoundary() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -128,6 +139,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld does not move outside grid or into wall")
     void cannotMoveIntoWall() {
         assertBlockedMovement(Direction.DOWN);
     }
@@ -135,6 +147,7 @@ class GridWorldTest {
     // ---------------- Reward Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld applies step penalty on empty cell")
     void appliesStepPenaltyOnEmptyCell() {
         StepResult result = world.step(Direction.RIGHT);
 
@@ -142,6 +155,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld applies step penalty on empty cell")
     void addsBonusRewardToStepPenalty() {
         world.step(Direction.RIGHT);
 
@@ -151,6 +165,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld applies step penalty on empty cell")
     void addsPositiveTerminalRewardToStepPenalty() {
         world.step(Direction.RIGHT);
 
@@ -160,6 +175,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld applies step penalty on empty cell")
     void addsNegativeTerminalRewardToStepPenalty() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -172,6 +188,7 @@ class GridWorldTest {
     // ---------------- Terminal State Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld identifies terminal state correctly")
     void reachesGoal() {
         world.step(Direction.RIGHT);
 
@@ -182,6 +199,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld identifies terminal state correctly")
     void reachesTrap() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -193,6 +211,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld identifies terminal state correctly")
     void cannotMoveAfterTerminalState() {
         world.step(Direction.RIGHT);
         world.step(Direction.RIGHT);
@@ -207,6 +226,7 @@ class GridWorldTest {
     // ---------------- Constructor Validation Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld rejects null map")
     void rejectsNullMap() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -218,6 +238,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects null initial position")
     void rejectsNullInitialPosition() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -229,6 +250,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects initial position outside grid")
     void rejectsInitialPositionOutsideGrid() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -240,6 +262,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects initial position on wall")
     void rejectsInitialPositionOnWall() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -251,6 +274,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects initial position on terminal cell")
     void rejectsInitialPositionOnTerminalCell() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -262,6 +286,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects positive step penalty")
     void rejectsPositiveStepPenalty() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -273,6 +298,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld accepts zero step penalty")
     void acceptsZeroStepPenalty() {
         GridWorld zeroPenaltyWorld = new GridWorld(map, start, 0);
 
@@ -284,6 +310,7 @@ class GridWorldTest {
     // ---------------- Exception Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld rejects null direction for step method")
     void rejectsNullDirection() {
         assertThrows(NullPointerException.class,
                 new Executable() {
@@ -297,6 +324,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld rejects null position for isWalkable method")
     void rejectsRewardOverflow() {
         world = new GridWorld(map, start, Integer.MIN_VALUE);
 
@@ -324,6 +352,7 @@ class GridWorldTest {
     // ---------------- Reset Tests ----------------
 
     @Test
+    @DisplayName ("GridWorld resets to initial position")
     void resetRestoresInitialPosition() {
         world.step(Direction.RIGHT);
         world.step(Direction.DOWN);
@@ -334,6 +363,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld resets to initial position and step penalty")
     void resetAllowsMovementAfterTerminalState() {
         world.step(Direction.RIGHT);
         world.step(Direction.RIGHT);
@@ -350,6 +380,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld resets to initial position and step penalty")
     void resetRestoresCustomInitialPosition() {
         Position initialPosition = new Position(2, 1);
 
@@ -366,7 +397,9 @@ class GridWorldTest {
 
     // ---------------- Preview Tests ----------------
 
+
     @Test
+    @DisplayName ("GridWorld preview matches step result")
     void previewMatchesStepResult() {
         StepResult expected = world.preview(start, Direction.RIGHT);
         StepResult actual = world.step(Direction.RIGHT);
@@ -375,6 +408,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview does not change world state")
     void previewCalculatesBonusReward() {
         StepResult expected = new StepResult(new Position(1, 1), 2, false);
 
@@ -384,6 +418,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview does not change world state")
     void previewCannotMoveIntoWallOrOutsideGrid() {
         StepResult expected = new StepResult(start, -1, false);
 
@@ -392,6 +427,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview does not change world state")
     void previewDoesNotChangeWorldState() {
         StepResult expected = new StepResult(new Position(0, 2), 9, true);
 
@@ -406,6 +442,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview does not change world state")
     void previewCannotMoveFromTerminalCell() {
         Position terminal = new Position(0, 2);
         StepResult expected = new StepResult(terminal, 0, true);
@@ -416,6 +453,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview does not change world state")
     void previewWorksAfterWorldReachesTerminal() {
         world.step(Direction.RIGHT);
         world.step(Direction.RIGHT);
@@ -431,8 +469,8 @@ class GridWorldTest {
     }
 
     // ---------------- Preview Exception Tests ----------------
-
-    @Test
+    @Test 
+    @DisplayName ("GridWorld preview rejects wall position")
     void previewRejectsWallPosition() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {
@@ -444,6 +482,7 @@ class GridWorldTest {
     }
 
     @Test
+    @DisplayName ("GridWorld preview rejects null position or direction")
     void previewRejectsOutsidePosition() {
         assertThrows(IllegalArgumentException.class,
                 new Executable() {

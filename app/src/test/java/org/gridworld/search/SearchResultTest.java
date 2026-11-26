@@ -1,16 +1,16 @@
 package org.gridworld.search;
 
-import org.gridworld.domain.Position;
-import org.gridworld.environment.Direction;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gridworld.domain.Position;
+import org.gridworld.environment.Direction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import  org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class SearchResultTest {
 
@@ -23,6 +23,7 @@ class SearchResultTest {
     // ------------------- Result Tests -------------------
 
     @Test
+    @DisplayName ("Search result stores values correctly")
     void storesSearchResultValues() {
         SearchResult result = new SearchResult(
                 true, path, actions, 1L, 10L, 2);
@@ -36,6 +37,7 @@ class SearchResultTest {
     }
 
     @Test
+    @DisplayName ("Search result accepts empty path when no path found")
     void acceptsEmptyPathWhenNoPathFound() {
         SearchResult result = new SearchResult(false, List.of(), List.of(), 0, 0, 2);
 
@@ -45,6 +47,7 @@ class SearchResultTest {
     }
 
     @Test
+    @DisplayName ("Search result supports values beyond integer range")
     void supportsValuesBeyondIntegerRange() {
         long totalCost = 5_000_000_000L;
         long totalReward = 3_000_000_000L;
@@ -60,6 +63,7 @@ class SearchResultTest {
     // --------------- Encapsulation Tests ----------------
 
     @Test
+    @DisplayName ("Search result protects path from external changes")
     void protectsPathFromExternalChanges() {
         List<Position> mutablePath = new ArrayList<>(path);
 
@@ -71,6 +75,7 @@ class SearchResultTest {
     }
 
     @Test
+    @DisplayName ("Search result protects actions from external changes")
     void protectsActionsFromExternalChanges() {
         List<Direction> mutableActions = new ArrayList<>(actions);
 
@@ -81,7 +86,9 @@ class SearchResultTest {
         assertEquals(actions, result.actions());
     }
 
+
     @Test
+    @DisplayName ("Search result protects path from external changes")
     void preventsModificationOfReturnedPath() {
         List<Position> mutablePath = new ArrayList<>(path);
 
@@ -92,6 +99,7 @@ class SearchResultTest {
     }
 
     @Test
+    @DisplayName ("Search result protects actions from external changes")
     void preventsModificationOfReturnedActions() {
         List<Direction> mutableActions = new ArrayList<>(actions);
 
@@ -104,12 +112,14 @@ class SearchResultTest {
     // ---------------- Validation Tests -----------------
 
     @Test
+    @DisplayName ("Search result rejects null path")
     void rejectsNullPath() {
         assertThrows(NullPointerException.class,
                 () -> new SearchResult(true, null, actions, 1, 10, 2));
     }
 
     @Test
+    @DisplayName ("Search result rejects null actions")
     void rejectsNullActions() {
         assertThrows(NullPointerException.class,
                 () -> new SearchResult(true, path, null, 1, 10, 2));
