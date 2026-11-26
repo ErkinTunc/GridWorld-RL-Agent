@@ -10,7 +10,7 @@ A Java project for building an intelligent agent that navigates a grid, avoids o
 
 The grid environment is independent of the decision-making algorithm, keeping the code simple, testable, and extensible.
 
-![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.1.png)
+![GridWorld UML class diagram](/docs/imgs/UML_GridWorld-v0.2.0.2.png)
 
 _Planned class structure; not all classes are implemented yet._
 
