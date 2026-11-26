@@ -43,7 +43,7 @@ public final class SearchProblem {
     // ------------------ Public Methods -----------------
 
     public SearchState initialState() {
-        return new SearchState(start, 0, 0L, Set.of(start));
+        return new SearchState(start, 0, 0L);
     }
 
     public Position goal() {
@@ -90,17 +90,13 @@ public final class SearchProblem {
                 && (!result.isTerminal() || result.position().equals(goal));
     }
 
-    private static SearchState createNextState(SearchState state, StepResult result) {
-
-        Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
-
-        visitedPositions.add(result.position());
+    private static SearchState createNextState(
+            SearchState state, StepResult result) {
 
         return new SearchState(
                 result.position(),
                 state.stepsUsed() + 1,
-                state.totalReward() + result.reward(),
-                visitedPositions);
+                state.totalReward() + result.reward());
     }
 
     private long calculateCost(SearchState state, int reward) {

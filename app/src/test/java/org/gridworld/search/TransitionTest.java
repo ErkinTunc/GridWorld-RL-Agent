@@ -14,8 +14,7 @@ class TransitionTest {
     private final SearchState state = new SearchState(
             new Position(0, 1),
             1,
-            4L,
-            Set.of(new Position(0, 0), new Position(0, 1)));
+            4L);
 
     // ---------------------- Tests ----------------------
 
