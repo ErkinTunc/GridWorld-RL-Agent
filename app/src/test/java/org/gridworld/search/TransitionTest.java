@@ -4,12 +4,20 @@ import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TransitionTest {
 
-    private final SearchState state = new SearchState(new Position(0, 1), 1);
+    private final SearchState state = new SearchState(
+            new Position(0, 1),
+            1,
+            4L,
+            Set.of(new Position(0, 0), new Position(0, 1)));
+
+    // ---------------------- Tests ----------------------
 
     @Test
     void storesTransitionValues() {
@@ -20,6 +28,8 @@ class TransitionTest {
         assertEquals(-1, transition.reward());
         assertEquals(12L, transition.cost());
     }
+
+    // ---------------- Validation Tests -----------------
 
     @Test
     void acceptsZeroCost() {

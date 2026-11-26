@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,40 +48,86 @@ class SearchProblemTest {
 
     @Test
     void createsInitialState() {
-        assertEquals(new SearchState(start, 0),
+        assertEquals(
+                new SearchState(start, 0, 0L, Set.of(start)),
                 problem.initialState());
     }
 
     @Test
-    void returnsGoal() {
-        assertEquals(goal, problem.goal());
-    }
-
-    @Test
     void identifiesGoal() {
-        assertTrue(problem.isGoal(new SearchState(goal, 2)));
+        SearchState state = new SearchState(
+                goal, 2, 8L,
+                Set.of(start, new Position(0, 1), goal));
+
+        assertTrue(problem.isGoal(state));
         assertFalse(problem.isGoal(problem.initialState()));
+        assertThrows(NullPointerException.class,
+                () -> problem.isGoal(null));
     }
 
     @Test
     void acceptsGoalAtMaxSteps() {
-        assertTrue(problem.isGoal(new SearchState(goal, 4)));
+        SearchState state = new SearchState(
+                goal, 4, 9L,
+                Set.of(start, new Position(0, 1),
+                        new Position(1, 1), goal));
+
+        assertTrue(problem.isGoal(state));
     }
 
     @Test
     void rejectsGoalBeyondMaxSteps() {
-        assertFalse(problem.isGoal(new SearchState(goal, 5)));
+        SearchState state = new SearchState(
+                goal, 5, 8L, Set.of(start, goal));
+
+        assertFalse(problem.isGoal(state));
     }
 
     @Test
     void generatesOnlyValidSuccessors() {
         List<Transition> transitions = problem.successors(problem.initialState());
 
+        Position next = new Position(0, 1);
+
         assertEquals(List.of(new Transition(
-                new SearchState(new Position(0, 1), 1),
+                new SearchState(
+                        next, 1, -1L, Set.of(start, next)),
                 Direction.RIGHT,
                 -1,
                 12L)), transitions);
+    }
+
+    @Test
+    void stopsAtMaxSteps() {
+        SearchState state = new SearchState(
+                start, 4, -4L,
+                Set.of(start, new Position(0, 1)));
+
+        assertTrue(problem.successors(state).isEmpty());
+    }
+
+    @Test
+    void stopsAtGoal() {
+        SearchState state = new SearchState(
+                goal, 2, 8L,
+                Set.of(start, new Position(0, 1), goal));
+
+        assertTrue(problem.successors(state).isEmpty());
+    }
+
+    @Test
+    void excludesOtherTerminalCells() {
+        SearchState state = new SearchState(
+                new Position(1, 1),
+                2,
+                1L,
+                Set.of(start, new Position(0, 1),
+                        new Position(1, 1)));
+
+        List<Transition> transitions = problem.successors(state);
+
+        assertEquals(1, transitions.size());
+        assertEquals(Direction.UP, transitions.getFirst().action());
     }
 
     @Test
@@ -88,30 +135,6 @@ class SearchProblemTest {
         problem.successors(problem.initialState());
 
         assertEquals(start, world.position());
-    }
-
-    @Test
-    void stopsAtMaxSteps() {
-        SearchState state = new SearchState(start, 4);
-
-        assertTrue(problem.successors(state).isEmpty());
-    }
-
-    @Test
-    void stopsAtGoal() {
-        SearchState state = new SearchState(goal, 2);
-
-        assertTrue(problem.successors(state).isEmpty());
-    }
-
-    @Test
-    void excludesOtherTerminalCells() {
-        SearchState state = new SearchState(new Position(1, 1), 2);
-
-        List<Transition> transitions = problem.successors(state);
-
-        assertEquals(1, transitions.size());
-        assertEquals(Direction.UP, transitions.getFirst().action());
     }
 
     @Test
@@ -181,6 +204,32 @@ class SearchProblemTest {
     void rejectsNegativeMaxSteps() {
         assertThrows(IllegalArgumentException.class,
                 () -> new SearchProblem(world, start, goal, -1));
+    }
+
+    @Test
+    void accumulatesRewards() {
+        Transition first = findTransition(
+                problem.initialState(), Direction.RIGHT);
+
+        Transition second = findTransition(
+                first.state(), Direction.DOWN);
+
+        assertEquals(-1L, first.state().totalReward());
+        assertEquals(1L, second.state().totalReward());
+    }
+
+    @Test
+    void updatesVisitedPositionsWithoutChangingParent() {
+        SearchState initial = problem.initialState();
+
+        Transition first = findTransition(
+                initial, Direction.RIGHT);
+
+        assertEquals(Set.of(start),
+                initial.visitedPositions());
+
+        assertEquals(Set.of(start, new Position(0, 1)),
+                first.state().visitedPositions());
     }
 
     // ------------------ Helper Methods -----------------

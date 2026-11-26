@@ -47,6 +47,13 @@ class GridWorldTest {
         assertEquals(start, world.position());
     }
 
+    @Test
+    void reportsWhetherPositionIsWalkable() {
+        assertTrue(world.isWalkable(start));
+        assertFalse(world.isWalkable(new Position(1, 0)));
+        assertFalse(world.isWalkable(new Position(-1, 0)));
+    }
+
     // ---------------- Movement Tests ----------------
 
     @Test

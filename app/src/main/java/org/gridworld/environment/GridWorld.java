@@ -36,6 +36,10 @@ public final class GridWorld {
         return currentPosition;
     }
 
+    public boolean isWalkable(Position position) {
+        return map.isWalkable(position);
+    }
+
     public void reset() {
         currentPosition = initialPosition;
         done = false;

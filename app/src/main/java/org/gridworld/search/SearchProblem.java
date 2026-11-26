@@ -10,6 +10,8 @@ import org.gridworld.environment.StepResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class SearchProblem {
 
@@ -42,7 +44,7 @@ public final class SearchProblem {
     // ------------------ Public Methods -----------------
 
     public SearchState initialState() {
-        return new SearchState(start, 0);
+        return new SearchState(start, 0, 0L, Set.of(start));
     }
 
     public Position goal() {
@@ -68,9 +70,15 @@ public final class SearchProblem {
                 continue;
             }
 
+            Set<Position> visitedPositions = new HashSet<>(state.visitedPositions());
+
+            visitedPositions.add(result.position());
+
             SearchState nextState = new SearchState(
                     result.position(),
-                    state.stepsUsed() + 1);
+                    state.stepsUsed() + 1,
+                    state.totalReward() + result.reward(),
+                    visitedPositions);
 
             long cost = calculateCost(nextState, result.reward());
 
