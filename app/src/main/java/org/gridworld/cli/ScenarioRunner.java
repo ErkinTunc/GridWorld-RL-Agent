@@ -16,7 +16,9 @@ public final class ScenarioRunner {
 
     // ---------------- Constructor ----------------
 
-    public ScenarioRunner(GridWorld world, SearchProblem problem) {
+    public ScenarioRunner(
+            GridWorld world,
+            SearchProblem problem) {
 
         this.world = Objects.requireNonNull(
                 world, "World cannot be null");

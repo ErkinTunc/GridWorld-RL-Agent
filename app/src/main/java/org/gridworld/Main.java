@@ -1,11 +1,11 @@
+
 package org.gridworld;
 
 import org.gridworld.cli.ConsolePrinter;
+import org.gridworld.cli.Scenario;
+import org.gridworld.cli.ScenarioFactory;
 import org.gridworld.cli.ScenarioRunner;
-import org.gridworld.domain.Cell;
-import org.gridworld.domain.CellType;
 import org.gridworld.domain.GridMap;
-import org.gridworld.domain.Position;
 import org.gridworld.environment.GridWorld;
 import org.gridworld.search.AStarSearch;
 import org.gridworld.search.BacktrackingSearch;
@@ -16,65 +16,136 @@ import org.gridworld.search.SearchResult;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Main {
-
-    // ---------------- Configuration ----------------
-
-    private static final int MAX_STEPS = 4;
-    private static final int STEP_PENALTY = -1;
 
     // ---------------- Public Methods ----------------
 
     public static void main(String[] args) {
 
-        Position start = new Position(0, 0);
-        Position goal = new Position(0, 2);
+        if (args.length > 0) {
+            selectScenario(args[0]);
+            return;
+        }
 
-        GridWorld world = createWorld(start);
+        runMenu();
+    }
 
-        SearchProblem problem = new SearchProblem(
-                world, start, goal, MAX_STEPS);
+    // ---------------- Menu Management ----------------
+
+    private static void runMenu() {
+
+        try (Scanner scanner = new Scanner(System.in)) {
+
+            while (true) {
+
+                ConsolePrinter.printMenu();
+
+                if (!scanner.hasNextLine()) {
+                    return;
+                }
+
+                String choice = scanner.nextLine().trim();
+
+                if (choice.equals("0")) {
+                    System.out.println("Goodbye!");
+                    return;
+                }
+
+                selectScenario(choice);
+            }
+        }
+    }
+
+    private static void selectScenario(String choice) {
+
+        ScenarioFactory.create(choice).ifPresentOrElse(
+                Main::runScenario,
+                () -> System.out.println("Invalid choice."));
+    }
+
+    // ---------------- Scenario Execution ----------------
+
+    private static void runScenario(Scenario scenario) {
+
+        GridWorld world = createWorld(scenario);
+        SearchProblem problem = createProblem(world, scenario);
 
         ScenarioRunner runner = new ScenarioRunner(world, problem);
 
-        List<SearchAlgorithm> algorithms = List.of(
-                new BacktrackingSearch(),
-                new AStarSearch());
-
         Map<String, SearchResult> results = new LinkedHashMap<>();
 
-        ConsolePrinter.printHeader("GRIDWORLD - SEARCH RESULTS");
+        printInitialScenario(scenario);
 
-        for (SearchAlgorithm algorithm : algorithms) {
+        for (SearchAlgorithm algorithm : createAlgorithms()) {
 
             String name = algorithm.getClass().getSimpleName();
+
             SearchResult result = runner.runAlgorithm(algorithm);
 
             results.put(name, result);
 
-            ConsolePrinter.printResult(name, result, world.position());
+            ConsolePrinter.printResult(
+                    name, result, world.position());
+
+            if (result.pathFound()) {
+
+                ConsolePrinter.printGrid(
+                        scenario.cells(),
+                        scenario.start(),
+                        scenario.goal(),
+                        result.path());
+            }
         }
 
         ConsolePrinter.printComparison(results);
     }
 
-    // ---------------- World Initialization ----------------
+    // ---------------- Initialization Helpers ----------------
 
-    private static GridWorld createWorld(Position start) {
-
-        Cell empty = new Cell(CellType.EMPTY, 0);
-        Cell wall = new Cell(CellType.WALL, 0);
-        Cell bonus = new Cell(CellType.EMPTY, 3);
-        Cell goal = new Cell(CellType.TERMINAL, 10);
-        Cell trap = new Cell(CellType.TERMINAL, -10);
-
-        Cell[][] cells = {
-                { empty, empty, goal },
-                { wall, bonus, trap }
-        };
+    private static GridWorld createWorld(Scenario scenario) {
 
         return new GridWorld(
-                new GridMap(cells), start, STEP_PENALTY);
+                new GridMap(scenario.cells()),
+                scenario.start(),
+                scenario.stepPenalty());
+    }
+
+    private static SearchProblem createProblem(
+            GridWorld world, Scenario scenario) {
+
+        return new SearchProblem(
+                world,
+                scenario.start(),
+                scenario.goal(),
+                scenario.maxSteps());
+    }
+
+    private static List<SearchAlgorithm> createAlgorithms() {
+
+        return List.of(
+                new BacktrackingSearch(),
+                new AStarSearch());
+    }
+
+    // ---------------- Scenario Display ----------------
+
+    private static void printInitialScenario(Scenario scenario) {
+
+        ConsolePrinter.printHeader(scenario.title());
+
+        System.out.println("Max steps: " + scenario.maxSteps());
+        System.out.println("Step penalty: " + scenario.stepPenalty());
+
+        ConsolePrinter.printHeader("INITIAL GRID");
+
+        ConsolePrinter.printGrid(
+                scenario.cells(),
+                scenario.start(),
+                scenario.goal(),
+                List.of());
+
+        ConsolePrinter.printLegend();
     }
 }
