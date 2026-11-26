@@ -22,6 +22,10 @@ public final class ConsolePrinter {
     private static final String GRAY = "\u001B[90m";
     private static final String BOLD = "\u001B[1m";
 
+    // ---------------- Console Control ----------------
+
+    private static final String CLEAR_SCREEN = "\033[H\033[2J";
+
     // ---------------- Display Configuration ----------------
 
     private static final int TABLE_WIDTH = 70;
@@ -33,8 +37,7 @@ public final class ConsolePrinter {
 
     private static final String RESULT_FORMAT = "%s | %s%n";
 
-    private static final String COMPARISON_FORMAT =
-            "%-22s | %s | %s | %15s%n";
+    private static final String COMPARISON_FORMAT = "%-22s | %s | %s | %15s%n";
 
     private static final String METRIC_FORMAT = "%12s";
 
@@ -43,10 +46,16 @@ public final class ConsolePrinter {
     private ConsolePrinter() {
     }
 
+    // ---------------- Screen Management ----------------
+
+    public static void clearScreen() {
+        System.out.print(CLEAR_SCREEN);
+        System.out.flush();
+    }
+
     // ---------------- Menu Display ----------------
 
     public static void printMenu() {
-
         printHeader("GRIDWORLD - SEARCH DEMO");
 
         System.out.println("1. Reward Maximization");
@@ -63,13 +72,10 @@ public final class ConsolePrinter {
     // ---------------- Header Display ----------------
 
     public static void printHeader(String title) {
-
         System.out.println();
 
         printSeparator();
-
         System.out.println(colorize(title, BOLD + CYAN));
-
         printSeparator();
     }
 
@@ -84,7 +90,6 @@ public final class ConsolePrinter {
         System.out.println();
 
         for (int row = 0; row < cells.length; row++) {
-
             for (int col = 0; col < cells[row].length; col++) {
 
                 Position position = new Position(row, col);
@@ -106,7 +111,6 @@ public final class ConsolePrinter {
     }
 
     public static void printLegend() {
-
         System.out.println("Legend:");
 
         System.out.println("S = Start");
@@ -138,17 +142,11 @@ public final class ConsolePrinter {
         printSeparator();
 
         printRow("Path", formatPath(result.path()), CYAN);
-
         printRow("Actions", formatActions(result.actions()), RESET);
-
         printRow("Total reward", result.totalReward(), GREEN);
-
         printRow("Total cost", result.totalCost(), YELLOW);
-
         printRow("Steps", result.actions().size(), RESET);
-
-        printRow("Final position",
-                formatPosition(finalPosition), GREEN);
+        printRow("Final position", formatPosition(finalPosition), GREEN);
 
         printSeparator();
     }
@@ -161,7 +159,6 @@ public final class ConsolePrinter {
         printHeader("SEARCH RESULTS COMPARISON");
 
         printComparisonHeader();
-
         printSeparator();
 
         results.forEach(ConsolePrinter::printComparisonRow);
@@ -172,7 +169,6 @@ public final class ConsolePrinter {
     // ---------------- Comparison Helpers ----------------
 
     private static void printComparisonHeader() {
-
         String header = String.format(
                 COMPARISON_FORMAT,
                 "Algorithm",
@@ -201,7 +197,6 @@ public final class ConsolePrinter {
     }
 
     private static void printUnavailableRow(String algorithm) {
-
         String unavailable = formatMetric(NOT_AVAILABLE, GRAY);
 
         System.out.printf(
@@ -251,7 +246,6 @@ public final class ConsolePrinter {
         List<Integer> visits = new ArrayList<>();
 
         for (int step = 0; step < path.size(); step++) {
-
             if (position.equals(path.get(step))) {
                 visits.add(step);
             }
@@ -276,34 +270,29 @@ public final class ConsolePrinter {
     }
 
     private static void printSeparator() {
-
         System.out.println(colorize(SEPARATOR, GRAY));
     }
 
     // ---------------- Result Formatting Helpers ----------------
 
     private static String formatPosition(Position position) {
-
         return String.format(
                 "(%d,%d)", position.row(), position.col());
     }
 
     private static String formatPath(List<Position> path) {
-
         return path.stream()
                 .map(ConsolePrinter::formatPosition)
                 .collect(Collectors.joining(ARROW));
     }
 
     private static String formatActions(List<Direction> actions) {
-
         return actions.stream()
                 .map(Direction::name)
                 .collect(Collectors.joining(ARROW));
     }
 
     private static String alignMetric(Object value) {
-
         return String.format(METRIC_FORMAT, value);
     }
 

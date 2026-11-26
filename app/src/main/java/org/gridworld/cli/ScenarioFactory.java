@@ -1,4 +1,3 @@
-
 package org.gridworld.cli;
 
 import org.gridworld.domain.Cell;
@@ -16,10 +15,10 @@ public final class ScenarioFactory {
 
     // ---------------- Cell Definitions ----------------
 
-    private static final Cell EMPTY   = new Cell(CellType.EMPTY, 0);
-    private static final Cell WALL    = new Cell(CellType.WALL, 0);
-    private static final Cell GOAL    = new Cell(CellType.TERMINAL, 10);
-    private static final Cell TRAP    = new Cell(CellType.TERMINAL, -10);
+    private static final Cell EMPTY = new Cell(CellType.EMPTY, 0);
+    private static final Cell WALL = new Cell(CellType.WALL, 0);
+    private static final Cell GOAL = new Cell(CellType.TERMINAL, 10);
+    private static final Cell TRAP = new Cell(CellType.TERMINAL, -10);
     private static final Cell BONUS_3 = new Cell(CellType.EMPTY, 3);
     private static final Cell BONUS_4 = new Cell(CellType.EMPTY, 4);
 
@@ -37,7 +36,7 @@ public final class ScenarioFactory {
             case "2" -> Optional.of(alternativeOptimalPaths());
             case "3" -> Optional.of(obstacleAvoidance());
             case "4" -> Optional.of(unreachableGoal());
-            default  -> Optional.empty();
+            default -> Optional.empty();
         };
     }
 
@@ -46,10 +45,10 @@ public final class ScenarioFactory {
     private static Scenario rewardMaximization() {
 
         Cell[][] cells = {
-                { EMPTY, EMPTY,   EMPTY, GOAL  },
-                { WALL,  BONUS_3, TRAP,  WALL  },
-                { EMPTY, EMPTY,   EMPTY, EMPTY },
-                { EMPTY, EMPTY,   EMPTY, EMPTY }
+                { EMPTY, EMPTY, EMPTY, GOAL },
+                { WALL, BONUS_3, TRAP, WALL },
+                { EMPTY, EMPTY, EMPTY, EMPTY },
+                { EMPTY, EMPTY, EMPTY, EMPTY }
         };
 
         return createScenario(
@@ -63,9 +62,9 @@ public final class ScenarioFactory {
 
         Cell[][] cells = {
                 { EMPTY, BONUS_4, EMPTY, EMPTY },
-                { EMPTY, WALL,    WALL,  EMPTY },
-                { EMPTY, WALL,    WALL,  EMPTY },
-                { EMPTY, BONUS_4, EMPTY, GOAL  }
+                { EMPTY, WALL, WALL, EMPTY },
+                { EMPTY, WALL, WALL, EMPTY },
+                { EMPTY, BONUS_4, EMPTY, GOAL }
         };
 
         return createScenario(
@@ -78,9 +77,9 @@ public final class ScenarioFactory {
     private static Scenario obstacleAvoidance() {
 
         Cell[][] cells = {
-                { EMPTY, WALL,  EMPTY, GOAL  },
-                { EMPTY, WALL,  EMPTY, EMPTY },
-                { EMPTY, WALL,  EMPTY, EMPTY },
+                { EMPTY, WALL, EMPTY, GOAL },
+                { EMPTY, WALL, EMPTY, EMPTY },
+                { EMPTY, WALL, EMPTY, EMPTY },
                 { EMPTY, EMPTY, EMPTY, EMPTY }
         };
 
@@ -94,7 +93,7 @@ public final class ScenarioFactory {
     private static Scenario unreachableGoal() {
 
         Cell[][] cells = {
-                { EMPTY, WALL, EMPTY, GOAL  },
+                { EMPTY, WALL, EMPTY, GOAL },
                 { EMPTY, WALL, EMPTY, EMPTY },
                 { EMPTY, WALL, EMPTY, EMPTY },
                 { EMPTY, WALL, EMPTY, EMPTY }

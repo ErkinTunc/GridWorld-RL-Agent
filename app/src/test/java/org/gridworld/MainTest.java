@@ -1,7 +1,7 @@
 package org.gridworld;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -9,17 +9,27 @@ class MainTest {
 
     // ---------------- Scenario Tests ----------------
 
-    @ParameterizedTest(name = "Scenario {0}: {1}")
-    @CsvSource({
-            "1, Reward maximization",
-            "2, Alternative optimal paths",
-            "3, Obstacle avoidance",
-            "4, Unreachable goal"
-    })
-    void runsScenarioSuccessfully(
-            String scenarioId, String scenarioName) {
+    @Test
+    @DisplayName("Reward maximization scenario runs successfully")
+    void runsRewardMaximizationScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "1" }));
+    }
 
-        assertDoesNotThrow(
-                () -> Main.main(new String[] { scenarioId }));
+    @Test
+    @DisplayName("Alternative optimal paths scenario runs successfully")
+    void runsAlternativeOptimalPathsScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "2" }));
+    }
+
+    @Test
+    @DisplayName("Obstacle avoidance scenario runs successfully")
+    void runsObstacleAvoidanceScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "3" }));
+    }
+
+    @Test
+    @DisplayName("Unreachable goal scenario runs successfully")
+    void runsUnreachableGoalScenario() {
+        assertDoesNotThrow(() -> Main.main(new String[] { "4" }));
     }
 }

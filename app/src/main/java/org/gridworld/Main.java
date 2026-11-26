@@ -1,4 +1,3 @@
-
 package org.gridworld;
 
 import org.gridworld.cli.ConsolePrinter;
@@ -38,6 +37,8 @@ public class Main {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
+            ConsolePrinter.clearScreen();
+
             while (true) {
 
                 ConsolePrinter.printMenu();
@@ -54,6 +55,12 @@ public class Main {
                 }
 
                 selectScenario(choice);
+
+                if (!waitForEnter(scanner)) {
+                    return;
+                }
+
+                ConsolePrinter.clearScreen();
             }
         }
     }
@@ -61,8 +68,24 @@ public class Main {
     private static void selectScenario(String choice) {
 
         ScenarioFactory.create(choice).ifPresentOrElse(
-                Main::runScenario,
+                scenario -> {
+                    ConsolePrinter.clearScreen();
+                    runScenario(scenario);
+                },
                 () -> System.out.println("Invalid choice."));
+    }
+
+    private static boolean waitForEnter(Scanner scanner) {
+
+        System.out.println();
+        System.out.print("Press Enter to return to the main menu...");
+
+        if (!scanner.hasNextLine()) {
+            return false;
+        }
+
+        scanner.nextLine();
+        return true;
     }
 
     // ---------------- Scenario Execution ----------------
