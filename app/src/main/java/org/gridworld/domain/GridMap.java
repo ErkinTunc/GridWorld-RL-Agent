@@ -63,7 +63,18 @@ public final class GridMap {
 
     // ------ Helper Methods -----
 
-    private Cell getCellUnchecked(Position pos) {
+    /**
+     * Returns the cell at the specified position without performing bounds checking.
+     * This method assumes that the position is valid and inside the grid.
+     * @param pos the position of the cell to get
+     * @return the cell at the specified position
+     * @throws IndexOutOfBoundsException if the position is outside the grid
+     */
+    private Cell getCellUnchecked(Position pos) throws IndexOutOfBoundsException {
+        if (!isInside(pos)) {
+            throw new IndexOutOfBoundsException(
+                    "Position is outside the grid: " + pos);
+        }
         return cells[pos.row()][pos.col()];
     }
 
