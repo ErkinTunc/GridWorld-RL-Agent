@@ -1,11 +1,11 @@
 package org.gridworld.search;
 
-import org.gridworld.domain.Position;
-import org.gridworld.environment.Direction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.gridworld.domain.Position;
+import org.gridworld.environment.Direction;
 
 /**
  * Implements a backtracking search algorithm that explores valid paths
@@ -54,7 +54,7 @@ public final class BacktrackingSearch implements SearchAlgorithm {
             long currentCost,
             SearchContext context) {
 
-        if (problem.isGoal(state)) {
+        if (problem.isGoal(state) ) {
             context.saveIfBetter(state, currentCost);
             return;
         }
