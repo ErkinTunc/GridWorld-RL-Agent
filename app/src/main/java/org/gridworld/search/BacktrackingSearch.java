@@ -7,6 +7,10 @@ import java.util.Objects;
 import org.gridworld.domain.Position;
 import org.gridworld.environment.Direction;
 
+/**
+ * Implements a backtracking search algorithm that explores valid paths
+ * and selects the path with the highest total reward within the step limit.
+ */
 public final class BacktrackingSearch implements SearchAlgorithm {
 
     // ---------------- Public Methods ----------------
@@ -33,6 +37,17 @@ public final class BacktrackingSearch implements SearchAlgorithm {
 
     // ---------------- Recursive Search ----------------
 
+    /**
+     * Recursively explores valid paths using the choose, explore,
+     * and undo approach.
+     * When a goal is reached, the current solution is compared
+     * with the best solution found so far.
+     *
+     * @param problem     The search problem to solve.
+     * @param state       The current search state.
+     * @param currentCost The accumulated cost of the current path.
+     * @param context     The context containing search information.
+     */
     private static void explore(
             SearchProblem problem,
             SearchState state,
@@ -47,20 +62,25 @@ public final class BacktrackingSearch implements SearchAlgorithm {
         context.expandedNodes++;
 
         for (Transition transition : problem.successors(state)) {
-            context.addStep(transition);
+            context.addStep(transition); // Choose
 
-            explore(
+            explore( // Explore
                     problem,
                     transition.state(),
                     currentCost + transition.cost(),
                     context);
 
-            context.removeLastStep();
+            context.removeLastStep(); // Undo
         }
     }
 
     // ---------------- Private Class ----------------
 
+    /**
+     * Stores the current path, the best solution found,
+     * and the number of expanded nodes during a search.
+     * A new context is created for each search execution.
+     */
     private static final class SearchContext {
 
         private final List<Position> currentPath = new ArrayList<>();
@@ -91,6 +111,15 @@ public final class BacktrackingSearch implements SearchAlgorithm {
 
         // ---------------- Solution Management ----------------
 
+        /**
+         * Saves the current solution if no solution has been found
+         * or if its total reward is higher than the best reward.
+         * Copies the path and actions to protect the saved solution
+         * from further backtracking.
+         *
+         * @param state       The goal state of the current solution.
+         * @param currentCost The total cost of the current path.
+         */
         private void saveIfBetter(SearchState state, long currentCost) {
             if (hasSolution() && state.totalReward() <= bestReward) {
                 return;
